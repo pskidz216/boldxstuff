@@ -1,0 +1,169 @@
+import React from 'react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart, Cell } from 'recharts';
+
+const CleanKPIDashboard = () => {
+  // Monthly Open Orders Data
+  const openOrdersData = [
+    {month: '8/2024', current: 6321, previous: 10625},
+    {month: '9/2024', current: 7719, previous: 13296},
+    {month: '10/2024', current: 14755, previous: 14755},
+    {month: '11/2024', current: 44582, previous: 47417},
+    {month: '12/2024', current: 511708, previous: 511708},
+    {month: '1/2025', current: 211661, previous: 239233},
+    {month: '2/2025', current: 241201, previous: 270558},
+    {month: '3/2025', current: 1002886, previous: 1107158},
+    {month: '4/2025', current: 1609860, previous: 1610879},
+    {month: '5/2025', current: 1071682, previous: 1043950},
+    {month: '6/2025', current: 1007433, previous: 955014},
+    {month: '7/2025', current: 674774, previous: 637116},
+    {month: '8/2025', current: 522124, previous: 449561}
+  ];
+
+  // Business Line Data
+  const businessLineData = [
+    {name: 'HERMETICS', current: 5031088, previous: 5060907, change: -29819},
+    {name: 'PRECISION', current: 3392425, previous: 3337142, change: 55283}
+  ];
+
+  // Top 5 Customer Changes
+  const topCustomerChanges = [
+    {name: 'L3 Harris', value: 28257, percent: '+2.78%'},
+    {name: 'Honeywell ACS', value: 18248, percent: '+5.43%'},
+    {name: 'Cat Engine Systems', value: 17333, percent: '+5.61%'},
+    {name: 'ITT Aerospace', value: -7553, percent: '-0.42%'},
+    {name: 'Steris Corporation', value: -15947, percent: '-4.76%'}
+  ];
+
+  // Format numbers for tooltips
+  const formatNumber = (value) => `$${value.toLocaleString()}`;
+  
+  // Colors
+  const COLORS = {
+    current: '#0088FE',
+    previous: '#8884d8',
+    positive: '#4CAF50',
+    negative: '#F44336'
+  };
+
+  return (
+    <div className="p-4 bg-white" style={{width: '8.5in', maxWidth: '100%', margin: '0 auto'}}>
+      <h1 className="text-2xl font-bold text-center mb-4">KPI Analysis Summary</h1>
+      
+      {/* Key Summary Statistics */}
+      <div className="flex justify-between mb-6 text-center">
+        <div className="bg-blue-50 p-3 rounded-lg w-1/3 mx-2">
+          <h2 className="font-semibold">Open Orders</h2>
+          <p className="text-xl text-blue-600 font-bold">${(8423513).toLocaleString()}</p>
+          <p className="text-green-600 text-sm">▲ 0.30%</p>
+        </div>
+        <div className="bg-green-50 p-3 rounded-lg w-1/3 mx-2">
+          <h2 className="font-semibold">Revenue</h2>
+          <p className="text-xl text-green-600 font-bold">${(16633576).toLocaleString()}</p>
+          <p className="text-green-600 text-sm">▲ 1.42%</p>
+        </div>
+        <div className="bg-purple-50 p-3 rounded-lg w-1/3 mx-2">
+          <h2 className="font-semibold">Bookings</h2>
+          <p className="text-xl text-purple-600 font-bold">${(12804906).toLocaleString()}</p>
+          <p className="text-green-600 text-sm">▲ 1.33%</p>
+        </div>
+      </div>
+      
+      {/* Chart 1: Monthly Open Orders Trend */}
+      <div className="bg-gray-50 p-4 rounded-lg mb-6">
+        <h2 className="text-lg font-semibold mb-3">Monthly Open Orders Comparison</h2>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={openOrdersData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis dataKey="month" />
+              <YAxis tickFormatter={formatNumber} />
+              <Tooltip formatter={formatNumber} />
+              <Legend />
+              <Line 
+                type="monotone" 
+                dataKey="current" 
+                name="Current" 
+                stroke={COLORS.current} 
+                strokeWidth={2} 
+                dot={{ r: 3 }} 
+                activeDot={{ r: 7 }} 
+              />
+              <Line 
+                type="monotone" 
+                dataKey="previous" 
+                name="Previous" 
+                stroke={COLORS.previous} 
+                strokeDasharray="5 5" 
+                dot={{ r: 3 }} 
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      
+      {/* Chart 2: Business Line Comparison */}
+      <div className="bg-gray-50 p-4 rounded-lg mb-6">
+        <h2 className="text-lg font-semibold mb-3">Business Line Comparison</h2>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart 
+              data={businessLineData} 
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis dataKey="name" />
+              <YAxis tickFormatter={formatNumber} />
+              <Tooltip formatter={formatNumber} />
+              <Legend />
+              <Bar dataKey="current" name="Current" fill={COLORS.current} />
+              <Bar dataKey="previous" name="Previous" fill={COLORS.previous} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="flex justify-around mt-2 text-sm">
+          <p><span className="font-semibold">Hermetics:</span> <span className="text-red-500">-0.59%</span></p>
+          <p><span className="font-semibold">Precision:</span> <span className="text-green-500">+1.66%</span></p>
+        </div>
+      </div>
+      
+      {/* Chart 3: Top 5 Customer Changes */}
+      <div className="bg-gray-50 p-4 rounded-lg mb-6">
+        <h2 className="text-lg font-semibold mb-3">Top 5 Customer Changes</h2>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart 
+              data={topCustomerChanges} 
+              layout="vertical"
+              margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis type="number" tickFormatter={formatNumber} />
+              <YAxis type="category" dataKey="name" width={120} />
+              <Tooltip formatter={(value) => [`${formatNumber(value)}`, 'Change']} />
+              <Bar dataKey="value" name="$ Change">
+                {topCustomerChanges.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.value >= 0 ? COLORS.positive : COLORS.negative} 
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="flex flex-wrap justify-around mt-2 text-sm">
+          {topCustomerChanges.map((customer, index) => (
+            <p key={index}>
+              <span className="font-semibold">{customer.name}:</span> 
+              <span className={customer.value >= 0 ? "text-green-500" : "text-red-500"}>
+                {' '}{customer.percent}
+              </span>
+            </p>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CleanKPIDashboard;
