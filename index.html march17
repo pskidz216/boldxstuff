@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI Dashboard - Weekly Comparison</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 10px; /* Reduced padding for mobile */
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px; /* Reduced padding for smaller screens */
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em; /* Smaller base size for mobile */
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Smaller min width for mobile */
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-card h2 {
+            margin-top: 0;
+            font-size: 1.1em;
+            color: #555;
+        }
+        
+        .stat-value {
+            font-size: 1.5em; /* Slightly smaller for mobile */
+            font-weight: bold;
+            margin: 8px 0;
+        }
+        
+        .open-orders { color: #0088FE; }
+        .revenue { color: #00C49F; }
+        .bookings { color: #8884d8; }
+        .change-positive { color: #4CAF50; }
+        .change-negative { color: #F44336; }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .chart-container h2 {
+            margin-top: 0;
+            color: #555;
+            font-size: 1.2em;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 250px; /* Reduced height for mobile */
+            width: 100%; /* Ensure full width */
+            margin-bottom: 10px;
+        }
+        
+        .grid-2-col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjusted for mobile */
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .insights-box {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .insight-category h3 {
+            color: #0088FE;
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 6px;
+            font-size: 1.1em;
+        }
+        
+        .insight-category ul {
+            padding-left: 15px;
+        }
+        
+        .insight-category li {
+            margin-bottom: 6px;
+            font-size: 0.9em; /* Slightly smaller text */
+        }
+        
+        .info-banner {
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        
+        .info-banner span {
+            font-weight: bold;
+        }
+
+        /* Media Queries for Mobile */
+        @media (max-width: 600px) {
+            body { padding: 5px; }
+            .dashboard-container { padding: 10px; }
+            h1 { font-size: 1.2em; }
+            .stats-grid { grid-template-columns: 1fr; } /* Stack stats on small screens */
+            .stat-value { font-size: 1.3em; }
+            .chart-wrapper { height: 200px; } /* Smaller charts on mobile */
+            .grid-2-col { grid-template-columns: 1fr; } /* Stack 2-col grid */
+            .insights-grid { grid-template-columns: 1fr; } /* Stack insights */
+            .insight-category ul { padding-left: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>KPI Dashboard - Weekly Comparison</h1>
+        
+        <!-- Summary Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h2>Open Orders</h2>
+                <div class="stat-value open-orders">$8,423,513</div>
+                <div class="change-positive">▲ $25,464 (0.30%)</div>
+            </div>
+            <div class="stat-card">
+                <h2>Revenue</h2>
+                <div class="stat-value revenue">$16,633,576</div>
+                <div class="change-positive">▲ $232,705 (1.42%)</div>
+            </div>
+            <div class="stat-card">
+                <h2>Bookings</h2>
+                <div class="stat-value bookings">$12,804,906</div>
+                <div class="change-positive">▲ $167,569 (1.33%)</div>
+            </div>
+        </div>
+        
+        <!-- March 2025 Performance -->
+        <div class="chart-container">
+            <h2>March 2025 Performance</h2>
+            <div class="chart-wrapper">
+                <canvas id="marchPerformanceChart"></canvas>
+            </div>
+            <div class="info-banner">
+                <span>Key Insights:</span> March revenue up 145.17% and bookings up 42.31% from previous report
+            </div>
+        </div>
+        
+        <!-- Monthly Open Orders Trend -->
+        <div class="chart-container">
+            <h2>Open Orders - Monthly Comparison</h2>
+            <div class="chart-wrapper">
+                <canvas id="openOrdersChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Business Line and Customer Changes -->
+        <div class="grid-2-col">
+            <div class="chart-container">
+                <h2>Business Line Changes</h2>
+                <div class="chart-wrapper">
+                    <canvas id="businessLineChart"></canvas>
+                </div>
+                <div>
+                    <p>Hermetics: <span class="change-negative">▼ $29,819 (-0.59%)</span></p>
+                    <p>Precision: <span class="change-positive">▲ $55,283 (1.66%)</span></p>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h2>Top Customer Changes</h2>
+                <div class="chart-wrapper">
+                    <canvas id="customerChangesChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Key Insights -->
+        <div class="insights-box">
+            <h2>Key Insights</h2>
+            <div class="insights-grid">
+                <div class="insight-category">
+                    <h3>Open Orders Shifts</h3>
+                    <ul>
+                        <li>Q1 2025 shows reduced open orders: Jan (-11.5%), Feb (-10.9%)</li>
+                        <li>March 2025 decreased by 9.4% ($104K less)</li>
+                        <li>Late 2025 orders increased: Aug 2025 up 16.1% ($72.5K)</li>
+                    </ul>
+                </div>
+                <div class="insight-category">
+                    <h3>Business Line Performance</h3>
+                    <ul>
+                        <li>Precision line gaining strength: +1.66% ($55K)</li>
+                        <li>Hermetics line slight decline: -0.59% ($30K)</li>
+                        <li>Customer movement: L3 Harris (+$28K), Cat Systems (+$17K)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Formatter function for chart labels
+        function formatCurrency(value) {
+            return '$' + value.toLocaleString();
+        }
+        
+        // Chart.js configurations
+        window.onload = function() {
+            // Data (unchanged, just included for completeness)
+            const openOrdersData = [
+                {month: '8/2024', current: 6321, previous: 10625, change: -4304},
+                {month: '9/2024', current: 7719, previous: 13296, change: -5577},
+                {month: '10/2024', current: 14755, previous: 14755, change: 0},
+                {month: '11/2024', current: 44582, previous: 47417, change: -2835},
+                {month: '12/2024', current: 511708, previous: 511708, change: 0},
+                {month: '1/2025', current: 211661, previous: 239233, change: -27572},
+                {month: '2/2025', current: 241201, previous: 270558, change: -29357},
+                {month: '3/2025', current: 1002886, previous: 1107158, change: -104272},
+                {month: '4/2025', current: 1609860, previous: 1610879, change: -1019},
+                {month: '5/2025', current: 1071682, previous: 1043950, change: 27732},
+                {month: '6/2025', current: 1007433, previous: 955014, change: 52419},
+                {month: '7/2025', current: 674774, previous: 637116, change: 37658},
+                {month: '8/2025', current: 522124, previous: 449561, change: 72563}
+            ];
+
+            const businessLineData = [
+                {name: 'HERMETICS', current: 5031088, previous: 5060907, change: -29819},
+                {name: 'PRECISION', current: 3392425, previous: 3337142, change: 55283}
+            ];
+
+            const topCustomerChanges = [
+                {name: 'L3 Harris', value: 28257, percent: 2.78},
+                {name: 'Honeywell ACS', value: 18248, percent: 5.43},
+                {name: 'Cat Engine Systems', value: 17333, percent: 5.61},
+                {name: 'ITT Aerospace', value: -7553, percent: -0.42},
+                {name: 'Steris Corporation', value: -15947, percent: -4.76}
+            ];
+
+            const marchMetrics = [
+                {category: 'Revenue', current: 393005, previous: 160299, change: 232706, changePercent: 145.17},
+                {category: 'Bookings', current: 408000, previous: 286703, change: 121297, changePercent: 42.31}
+            ];
+            
+            // March Performance Chart
+            const marchCtx = document.getElementById('marchPerformanceChart').getContext('2d');
+            new Chart(marchCtx, {
+                type: 'bar',
+                data: {
+                    labels: marchMetrics.map(item => item.category),
+                    datasets: [
+                        {
+                            label: 'Current Week',
+                            data: marchMetrics.map(item => item.current),
+                            backgroundColor: '#0088FE',
+                        },
+                        {
+                            label: 'Previous Week',
+                            data: marchMetrics.map(item => item.previous),
+                            backgroundColor: '#8884d8',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) { return formatCurrency(value); },
+                                font: { size: 10 } // Smaller font for mobile
+                            }
+                        },
+                        x: { ticks: { font: { size: 10 } } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatCurrency(context.raw);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Open Orders Chart
+            const openOrdersCtx = document.getElementById('openOrdersChart').getContext('2d');
+            new Chart(openOrdersCtx, {
+                type: 'line',
+                data: {
+                    labels: openOrdersData.map(item => item.month),
+                    datasets: [
+                        {
+                            label: 'Current',
+                            data: openOrdersData.map(item => item.current),
+                            borderColor: '#0088FE',
+                            backgroundColor: 'rgba(0, 136, 254, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Previous',
+                            data: openOrdersData.map(item => item.previous),
+                            borderColor: '#8884d8',
+                            backgroundColor: 'rgba(136, 132, 216, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) { return formatCurrency(value); },
+                                font: { size: 10 }
+                            }
+                        },
+                        x: { ticks: { font: { size: 8 } } } // Smaller x-axis labels
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatCurrency(context.raw);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Business Line Chart
+            const businessLineCtx = document.getElementById('businessLineChart').getContext('2d');
+            new Chart(businessLineCtx, {
+                type: 'bar',
+                data: {
+                    labels: businessLineData.map(item => item.name),
+                    datasets: [
+                        {
+                            label: 'Current',
+                            data: businessLineData.map(item => item.current),
+                            backgroundColor: '#0088FE',
+                        },
+                        {
+                            label: 'Previous',
+                            data: businessLineData.map(item => item.previous),
+                            backgroundColor: '#8884d8',
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) { return formatCurrency(value); },
+                                font: { size: 10 }
+                            }
+                        },
+                        y: { ticks: { font: { size: 10 } } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatCurrency(context.raw);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Customer Changes Chart
+            const customerChangesCtx = document.getElementById('customerChangesChart').getContext('2d');
+            new Chart(customerChangesCtx, {
+                type: 'bar',
+                data: {
+                    labels: topCustomerChanges.map(item => item.name),
+                    datasets: [
+                        {
+                            label: 'Change ($)',
+                            data: topCustomerChanges.map(item => item.value),
+                            backgroundColor: topCustomerChanges.map(item => 
+                                item.value >= 0 ? '#4CAF50' : '#F44336'
+                            )
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) { return formatCurrency(value); },
+                                font: { size: 10 }
+                            }
+                        },
+                        y: { ticks: { font: { size: 10 } } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const percent = topCustomerChanges[context.dataIndex].percent;
+                                    return `Change: ${formatCurrency(value)} (${value >= 0 ? '+' : ''}${percent}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
