@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KPI Dashboard - Weekly Comparison</title>
+    <title>KPI Dashboard - March 10th vs March 17th Comparison</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
             margin: 0;
-            padding: 20px;
+            padding: 10px; /* Reduced for mobile */
         }
         
         .dashboard-container {
@@ -19,131 +19,136 @@
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px;
+            padding: 15px; /* Reduced for mobile */
         }
         
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            font-size: 1.5em; /* Scalable base size */
         }
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjusted for mobile */
+            gap: 15px;
+            margin-bottom: 20px;
         }
         
         .stat-card {
             background-color: white;
             border-radius: 8px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             text-align: center;
         }
         
         .stat-card h2 {
             margin-top: 0;
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #555;
         }
         
         .stat-value {
-            font-size: 1.8em;
+            font-size: 1.5em; /* Slightly smaller for mobile */
             font-weight: bold;
-            margin: 10px 0;
+            margin: 8px 0;
         }
         
-        .open-orders {
-            color: #0088FE;
-        }
-        
-        .revenue {
-            color: #00C49F;
-        }
-        
-        .bookings {
-            color: #8884d8;
-        }
-        
-        .change-positive {
-            color: #4CAF50;
-        }
-        
-        .change-negative {
-            color: #F44336;
-        }
+        .open-orders { color: #0088FE; }
+        .revenue { color: #00C49F; }
+        .bookings { color: #8884d8; }
+        .change-positive { color: #4CAF50; }
+        .change-negative { color: #F44336; }
         
         .chart-container {
             background-color: white;
             border-radius: 8px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
         .chart-container h2 {
             margin-top: 0;
             color: #555;
+            font-size: 1.2em;
         }
         
         .chart-wrapper {
             position: relative;
-            height: 300px;
-            margin-bottom: 15px;
+            height: 250px; /* Reduced for mobile */
+            width: 100%; /* Ensure full width */
+            margin-bottom: 10px;
         }
         
         .grid-2-col {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjusted for mobile */
+            gap: 15px;
+            margin-bottom: 20px;
         }
         
         .insights-box {
             background-color: white;
             border-radius: 8px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
         .insights-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
         }
         
         .insight-category h3 {
             color: #0088FE;
             margin-top: 0;
             border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
+            padding-bottom: 6px;
+            font-size: 1.1em;
         }
         
         .insight-category ul {
-            padding-left: 20px;
+            padding-left: 15px;
         }
         
         .insight-category li {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            font-size: 0.9em;
         }
         
         .info-banner {
             background-color: #e3f2fd;
-            padding: 15px;
+            padding: 10px;
             border-radius: 5px;
-            margin-top: 15px;
+            margin-top: 10px;
+            font-size: 0.9em;
         }
         
         .info-banner span {
             font-weight: bold;
         }
+
+        /* Media Queries for Mobile */
+        @media (max-width: 600px) {
+            body { padding: 5px; }
+            .dashboard-container { padding: 10px; }
+            h1 { font-size: 1.2em; }
+            .stats-grid { grid-template-columns: 1fr; } /* Stack stats */
+            .stat-value { font-size: 1.3em; }
+            .chart-wrapper { height: 200px; } /* Smaller charts */
+            .grid-2-col { grid-template-columns: 1fr; } /* Stack 2-col grid */
+            .insights-grid { grid-template-columns: 1fr; } /* Stack insights */
+            .insight-category ul { padding-left: 10px; }
+        }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
-        <h1>KPI Dashboard - Weekly Comparison</h1>
+        <h1>KPI Dashboard - March 10th vs March 17th Comparison</h1>
         
         <!-- Summary Statistics -->
         <div class="stats-grid">
@@ -166,12 +171,12 @@
         
         <!-- March 2025 Performance -->
         <div class="chart-container">
-            <h2>March 2025 Performance</h2>
+            <h2>March 2025 Weekly Performance</h2>
             <div class="chart-wrapper">
                 <canvas id="marchPerformanceChart"></canvas>
             </div>
             <div class="info-banner">
-                <span>Key Insights:</span> March revenue up 145.17% and bookings up 42.31% from previous report
+                <span>Key Insights:</span> March 17th data shows revenue up 145.17% and bookings up 42.31% compared to March 10th data
             </div>
         </div>
         
@@ -191,8 +196,8 @@
                     <canvas id="businessLineChart"></canvas>
                 </div>
                 <div>
-                    <p>Hermetics: <span class="change-negative">▼ $29,819 (-0.59%)</span></p>
-                    <p>Precision: <span class="change-positive">▲ $55,283 (1.66%)</span></p>
+                    <p>Hermetics: <span class="change-negative">▼ $29,819 (-0.59%) from March 10th to March 17th</span></p>
+                    <p>Precision: <span class="change-positive">▲ $55,283 (1.66%) from March 10th to March 17th</span></p>
                 </div>
             </div>
             
@@ -279,12 +284,12 @@
                     labels: marchMetrics.map(item => item.category),
                     datasets: [
                         {
-                            label: 'Current Week',
+                            label: 'March 17th Data',
                             data: marchMetrics.map(item => item.current),
                             backgroundColor: '#0088FE',
                         },
                         {
-                            label: 'Previous Week',
+                            label: 'March 10th Data',
                             data: marchMetrics.map(item => item.previous),
                             backgroundColor: '#8884d8',
                         }
@@ -297,11 +302,11 @@
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
+                                callback: function(value) { return formatCurrency(value); },
+                                font: { size: 10 } // Smaller ticks for mobile
                             }
-                        }
+                        },
+                        x: { ticks: { font: { size: 10 } } }
                     },
                     plugins: {
                         tooltip: {
@@ -323,7 +328,7 @@
                     labels: openOrdersData.map(item => item.month),
                     datasets: [
                         {
-                            label: 'Current',
+                            label: 'March 17th Data',
                             data: openOrdersData.map(item => item.current),
                             borderColor: '#0088FE',
                             backgroundColor: 'rgba(0, 136, 254, 0.1)',
@@ -331,7 +336,7 @@
                             tension: 0.1
                         },
                         {
-                            label: 'Previous',
+                            label: 'March 10th Data',
                             data: openOrdersData.map(item => item.previous),
                             borderColor: '#8884d8',
                             backgroundColor: 'rgba(136, 132, 216, 0.1)',
@@ -348,11 +353,11 @@
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
+                                callback: function(value) { return formatCurrency(value); },
+                                font: { size: 10 }
                             }
-                        }
+                        },
+                        x: { ticks: { font: { size: 8 } } } // Smaller x-axis labels
                     },
                     plugins: {
                         tooltip: {
@@ -374,12 +379,12 @@
                     labels: businessLineData.map(item => item.name),
                     datasets: [
                         {
-                            label: 'Current',
+                            label: 'March 17th Data',
                             data: businessLineData.map(item => item.current),
                             backgroundColor: '#0088FE',
                         },
                         {
-                            label: 'Previous',
+                            label: 'March 10th Data',
                             data: businessLineData.map(item => item.previous),
                             backgroundColor: '#8884d8',
                         }
@@ -393,11 +398,11 @@
                         x: {
                             beginAtZero: true,
                             ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
+                                callback: function(value) { return formatCurrency(value); },
+                                font: { size: 10 }
                             }
-                        }
+                        },
+                        y: { ticks: { font: { size: 10 } } }
                     },
                     plugins: {
                         tooltip: {
@@ -435,11 +440,11 @@
                         x: {
                             beginAtZero: true,
                             ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
+                                callback: function(value) { return formatCurrency(value); },
+                                font: { size: 10 }
                             }
-                        }
+                        },
+                        y: { ticks: { font: { size: 10 } } }
                     },
                     plugins: {
                         tooltip: {
