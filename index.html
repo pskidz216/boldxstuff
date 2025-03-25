@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KPI Dashboard - Weekly Comparison</title>
+    <title>KPI Dashboard - March Weekly Comparison</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         body {
@@ -178,28 +178,168 @@
             font-size: 1em;
             margin-top: 5px;
         }
+        
+        .progress-container {
+            height: 24px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            position: relative;
+            margin: 15px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 0.5s;
+        }
+        
+        .progress-bar.warning {
+            background-color: #FFC107;
+        }
+        
+        .progress-bar.danger {
+            background-color: #F44336;
+        }
+        
+        .goal-text {
+            text-align: right;
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .week-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .week-button {
+            padding: 8px 15px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .week-button.active {
+            background-color: #0088FE;
+            color: white;
+            border-color: #0088FE;
+        }
+        
+        .goal-comparison {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .goal-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .goal-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .goal-value {
+            font-size: 1.2em;
+        }
+        
+        .dual-progress-container {
+            position: relative;
+            height: 24px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .dual-progress-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 0.5s;
+        }
+        
+        .dual-progress-bar.hermetics {
+            background-color: #00C49F;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 2;
+        }
+        
+        .dual-progress-bar.precision {
+            background-color: #0088FE;
+            position: absolute;
+            left: 20.07%;
+            top: 0;
+            z-index: 1;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 0 10px;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
-        <h1>KPI Dashboard - March 2nd vs March 9th Comparison</h1>
+        <h1>KPI Dashboard - March 2025 Weekly Comparison</h1>
+        
+        <!-- Week Selector -->
+        <div class="week-selector">
+            <button class="week-button" onclick="selectWeek(1)">Week 1 (Mar 2)</button>
+            <button class="week-button" onclick="selectWeek(2)">Week 2 (Mar 9)</button>
+            <button class="week-button" onclick="selectWeek(3)">Week 3 (Mar 16)</button>
+            <button class="week-button active" onclick="selectWeek(4)">Week 4 (Mar 23)</button>
+        </div>
         
         <!-- Summary Statistics -->
         <div class="stats-grid">
             <div class="stat-card">
                 <h2>Open Orders</h2>
-                <div class="stat-value open-orders">$8,423,513</div>
-                <div class="change-positive">▲ $25,464 (0.30%)</div>
+                <div class="stat-value open-orders" id="open-orders-value">$333,534</div>
+                <div class="change-positive" id="open-orders-change">▲ $47,647 (16.67%)</div>
             </div>
             <div class="stat-card">
                 <h2>Revenue</h2>
-                <div class="stat-value revenue">$16,633,576</div>
-                <div class="change-positive">▲ $232,705 (1.42%)</div>
+                <div class="stat-value revenue" id="revenue-value">$229,259</div>
+                <div class="change-positive" id="revenue-change">▲ $32,751 (16.67%)</div>
             </div>
             <div class="stat-card">
                 <h2>Bookings</h2>
-                <div class="stat-value bookings">$12,804,906</div>
-                <div class="change-positive">▲ $167,569 (1.33%)</div>
+                <div class="stat-value bookings" id="bookings-value">$831,299</div>
+                <div class="change-positive" id="bookings-change">▲ $408,000 (96.4%)</div>
             </div>
         </div>
         
@@ -210,42 +350,91 @@
                 <canvas id="marchPerformanceChart"></canvas>
             </div>
             <div class="info-banner">
-                <span>Key Insights:</span> March 9th data shows revenue up 45.17% and bookings up 45.33% compared to March 2nd data
+                <span>Key Insights:</span> March 16th data shows highest bookings of $423,300 while March 9th had the lowest at $121,297
             </div>
         </div>
         
-        <!-- Monthly Open Orders Trend -->
+        <!-- Combined Business Goal Progress -->
         <div class="chart-container">
-            <h2>Open Orders - Weekly Comparison</h2>
+            <h2>Combined Business Line Goal Progress - March 2025</h2>
+            <h3>Total Progress - Combined Goal: $1,833,333</h3>
+            <div class="dual-progress-container">
+                <div class="dual-progress-bar hermetics" style="width:20.07%">H</div>
+                <div class="dual-progress-bar precision" style="width:15.66%">P</div>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #00C49F;"></div>
+                    <span>Hermetics: 20.07%</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #0088FE;"></div>
+                    <span>Precision: 15.66%</span>
+                </div>
+                <div class="legend-item">
+                    <span>Combined: 35.73%</span>
+                </div>
+            </div>
+            <div class="goal-comparison">
+                <div class="goal-item">
+                    <div class="goal-label">Goal</div>
+                    <div class="goal-value">$1,833,333</div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-label">Current</div>
+                    <div class="goal-value">$655,025</div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-label">Remaining</div>
+                    <div class="goal-value">$1,178,308</div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-label">Progress</div>
+                    <div class="goal-value">35.73%</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h3>Business Line Breakdown</h3>
+                <div class="business-metrics">
+                    <div class="metric-card">
+                        <h3>Hermetics</h3>
+                        <div class="metric-value">$367,969</div>
+                        <div class="goal-progress">20.07% of Combined Goal</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Precision</h3>
+                        <div class="metric-value">$287,056</div>
+                        <div class="goal-progress">15.66% of Combined Goal</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Weekly Open Orders Trend -->
+        <div class="chart-container">
+            <h2>Open Orders - Weekly Trend</h2>
             <div class="chart-wrapper">
                 <canvas id="openOrdersChart"></canvas>
             </div>
         </div>
         
-        <!-- Business Revenue Changes (without graph) -->
+        <!-- Business Revenue Changes -->
         <div class="business-revenue-box">
             <h2>Business Revenue (Weekly Comparison)</h2>
             <div class="business-metrics">
                 <div class="metric-card">
                     <h3>Hermetics</h3>
-                    <div class="metric-value">$232,705</div>
-                    <div class="metric-change change-positive">▲ $72,406 (+45.17%) from March 2nd</div>
-                    <div class="metric-secondary">March 2nd: $160,299</div>
+                    <div class="metric-value" id="hermetics-value">$128,789</div>
+                    <div class="metric-change change-positive" id="hermetics-change">▲ $18,399 (16.67%) from Week 3</div>
+                    <div class="metric-secondary">Week 3 (Mar 16): $110,391</div>
                 </div>
                 <div class="metric-card">
                     <h3>Precision</h3>
-                    <div class="metric-value">$142,703</div>
-                    <div class="metric-change change-positive">▲ $44,510 (+45.33%) from March 2nd</div>
-                    <div class="metric-secondary">March 2nd: $98,193</div>
+                    <div class="metric-value" id="precision-value">$100,469</div>
+                    <div class="metric-change change-positive" id="precision-change">▲ $14,353 (16.67%) from Week 3</div>
+                    <div class="metric-secondary">Week 3 (Mar 16): $86,117</div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Customer Changes -->
-        <div class="chart-container">
-            <h2>Top Customer Changes</h2>
-            <div class="chart-wrapper">
-                <canvas id="customerChangesChart"></canvas>
             </div>
         </div>
         
@@ -254,19 +443,21 @@
             <h2>Key Insights</h2>
             <div class="insights-grid">
                 <div class="insight-category">
-                    <h3>Open Orders Shifts</h3>
+                    <h3>March Goal Progress</h3>
                     <ul>
-                        <li>Week of March 2nd shows open orders of $1,107,158</li>
-                        <li>Week of March 9th shows open orders of $1,610,879</li>
-                        <li>Weekly increase of $503,721 (45.5% growth)</li>
+                        <li>Combined Business Goal: $1,833,333</li>
+                        <li>Hermetics contribution: $367,969 (20.07% of goal)</li>
+                        <li>Precision contribution: $287,056 (15.66% of goal)</li>
+                        <li>Combined progress: 35.73% of total goal ($655,025 of $1,833,333)</li>
                     </ul>
                 </div>
                 <div class="insight-category">
-                    <h3>Business Line Performance</h3>
+                    <h3>Weekly Performance</h3>
                     <ul>
-                        <li>Hermetics revenue growth: <strong>+45.17%</strong> ($72,406)</li>
-                        <li>Precision revenue growth: <strong>+45.33%</strong> ($44,510)</li>
-                        <li>Total revenue increased from $258,492 to $375,408 week-over-week</li>
+                        <li>Week 3 (Mar 16) had highest bookings at $423,300</li>
+                        <li>Week 2 (Mar 9) had lowest bookings at $121,297</li>
+                        <li>Progressive revenue increases week-over-week</li>
+                        <li>Total March revenue: $655,025 (combined from all business lines)</li>
                     </ul>
                 </div>
             </div>
@@ -279,48 +470,42 @@
             return '$' + value.toLocaleString();
         }
         
+        // Dashboard data
+        const dashboardData = {
+            weeks: ['March 2', 'March 9', 'March 16', 'March 23'],
+            bookings: [286703.12, 121296.78, 423299.53, 831299.43],
+            revenueHermetics: [55195.41, 73593.88, 110390.82, 128789.29],
+            revenuePrecision: [43058.33, 57411.10, 86116.65, 100469.43],
+            openOrders: [142943.07, 190590.76, 285886.15, 333533.84]
+        };
+        
         // Chart.js configurations
         window.onload = function() {
-            // Data
-            const openOrdersData = [
-                {month: '3/2/2025', current: 160299, previous: 98193, change: 62106},
-                {month: '3/9/2025', current: 232705, previous: 142703, change: 90002}
-            ];
-
-            const businessLineData = [
-                {name: 'HERMETICS', dollars: 160299, percent: 232705, change: 72406, changePercent: 45.17},
-                {name: 'PRECISION', dollars: 98193, percent: 142703, change: 44510, changePercent: 45.33}
-            ];
-
-            const topCustomerChanges = [
-                {name: 'L3 Harris', value: 28257, percent: 2.78},
-                {name: 'Honeywell ACS', value: 18248, percent: 5.43},
-                {name: 'Cat Engine Systems', value: 17333, percent: 5.61},
-                {name: 'ITT Aerospace', value: -7553, percent: -0.42},
-                {name: 'Steris Corporation', value: -15947, percent: -4.76}
-            ];
-
-            const marchMetrics = [
-                {category: 'Revenue', current: 232705, previous: 160299, change: 72406, changePercent: 45.17},
-                {category: 'Bookings', current: 142703, previous: 98193, change: 44510, changePercent: 45.33}
-            ];
-            
             // March Performance Chart
             const marchCtx = document.getElementById('marchPerformanceChart').getContext('2d');
-            new Chart(marchCtx, {
+            const marchChart = new Chart(marchCtx, {
                 type: 'bar',
                 data: {
-                    labels: marchMetrics.map(item => item.category),
+                    labels: dashboardData.weeks,
                     datasets: [
                         {
-                            label: 'March 9th Data',
-                            data: marchMetrics.map(item => item.current),
+                            label: 'Revenue - Hermetics',
+                            data: dashboardData.revenueHermetics,
+                            backgroundColor: '#00C49F',
+                        },
+                        {
+                            label: 'Revenue - Precision',
+                            data: dashboardData.revenuePrecision,
                             backgroundColor: '#0088FE',
                         },
                         {
-                            label: 'March 2nd Data',
-                            data: marchMetrics.map(item => item.previous),
+                            label: 'Bookings',
+                            data: dashboardData.bookings,
                             backgroundColor: '#8884d8',
+                            type: 'line',
+                            borderColor: '#8884d8',
+                            fill: false,
+                            tension: 0.1
                         }
                     ]
                 },
@@ -351,27 +536,19 @@
             
             // Open Orders Chart
             const openOrdersCtx = document.getElementById('openOrdersChart').getContext('2d');
-            new Chart(openOrdersCtx, {
+            const openOrdersChart = new Chart(openOrdersCtx, {
                 type: 'line',
                 data: {
-                    labels: openOrdersData.map(item => item.month),
+                    labels: dashboardData.weeks,
                     datasets: [
                         {
-                            label: 'March 9th Data',
-                            data: openOrdersData.map(item => item.current),
+                            label: 'Weekly Open Orders',
+                            data: dashboardData.openOrders,
                             borderColor: '#0088FE',
                             backgroundColor: 'rgba(0, 136, 254, 0.1)',
                             borderWidth: 2,
-                            tension: 0.1
-                        },
-                        {
-                            label: 'March 2nd Data',
-                            data: openOrdersData.map(item => item.previous),
-                            borderColor: '#8884d8',
-                            backgroundColor: 'rgba(136, 132, 216, 0.1)',
-                            borderWidth: 2,
-                            borderDash: [5, 5],
-                            tension: 0.1
+                            tension: 0.1,
+                            fill: true
                         }
                     ]
                 },
@@ -400,50 +577,115 @@
                 }
             });
             
-            // Customer Changes Chart
-            const customerChangesCtx = document.getElementById('customerChangesChart').getContext('2d');
-            new Chart(customerChangesCtx, {
-                type: 'bar',
-                data: {
-                    labels: topCustomerChanges.map(item => item.name),
-                    datasets: [
-                        {
-                            label: 'Change ($)',
-                            data: topCustomerChanges.map(item => item.value),
-                            backgroundColor: topCustomerChanges.map(item => 
-                                item.value >= 0 ? '#4CAF50' : '#F44336'
-                            )
-                        }
-                    ]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const value = context.raw;
-                                    const percent = topCustomerChanges[context.dataIndex].percent;
-                                    return `Change: ${formatCurrency(value)} (${value >= 0 ? '+' : ''}${percent}%)`;
-                                }
-                            }
-                        }
-                    }
+            // Set week 4 as default active week
+            selectWeek(4);
+        };
+        
+        // Function to update the dashboard based on selected week
+        function selectWeek(weekIndex) {
+            // Update active button
+            const buttons = document.querySelectorAll('.week-button');
+            buttons.forEach((btn, index) => {
+                if (index + 1 === weekIndex) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
                 }
             });
-        };
+            
+            // Adjust array index (0-based)
+            const index = weekIndex - 1;
+            
+            // Get previous week index, handle week 1 case
+            const prevIndex = index > 0 ? index - 1 : 0;
+            
+            // Update summary statistics
+            const openOrdersValue = document.getElementById('open-orders-value');
+            const openOrdersChange = document.getElementById('open-orders-change');
+            const revenueValue = document.getElementById('revenue-value');
+            const revenueChange = document.getElementById('revenue-change');
+            const bookingsValue = document.getElementById('bookings-value');
+            const bookingsChange = document.getElementById('bookings-change');
+            const hermeticsValue = document.getElementById('hermetics-value');
+            const hermeticsChange = document.getElementById('hermetics-change');
+            const precisionValue = document.getElementById('precision-value');
+            const precisionChange = document.getElementById('precision-change');
+            
+            // Open Orders
+            const currentOpenOrders = dashboardData.openOrders[index];
+            const prevOpenOrders = dashboardData.openOrders[prevIndex];
+            const openOrdersDiff = currentOpenOrders - prevOpenOrders;
+            const openOrdersPercent = (openOrdersDiff / prevOpenOrders) * 100;
+            
+            openOrdersValue.textContent = formatCurrency(currentOpenOrders);
+            if (openOrdersDiff >= 0) {
+                openOrdersChange.className = 'change-positive';
+                openOrdersChange.textContent = `▲ ${formatCurrency(openOrdersDiff)} (${openOrdersPercent.toFixed(2)}%)`;
+            } else {
+                openOrdersChange.className = 'change-negative';
+                openOrdersChange.textContent = `▼ ${formatCurrency(Math.abs(openOrdersDiff))} (${Math.abs(openOrdersPercent).toFixed(2)}%)`;
+            }
+            
+            // Revenue (combined Hermetics and Precision)
+            const currentRevenue = dashboardData.revenueHermetics[index] + dashboardData.revenuePrecision[index];
+            const prevRevenue = dashboardData.revenueHermetics[prevIndex] + dashboardData.revenuePrecision[prevIndex];
+            const revenueDiff = currentRevenue - prevRevenue;
+            const revenuePercent = (revenueDiff / prevRevenue) * 100;
+            
+            revenueValue.textContent = formatCurrency(currentRevenue);
+            if (revenueDiff >= 0) {
+                revenueChange.className = 'change-positive';
+                revenueChange.textContent = `▲ ${formatCurrency(revenueDiff)} (${revenuePercent.toFixed(2)}%)`;
+            } else {
+                revenueChange.className = 'change-negative';
+                revenueChange.textContent = `▼ ${formatCurrency(Math.abs(revenueDiff))} (${Math.abs(revenuePercent).toFixed(2)}%)`;
+            }
+            
+            // Bookings
+            const currentBookings = dashboardData.bookings[index];
+            const prevBookings = dashboardData.bookings[prevIndex];
+            const bookingsDiff = currentBookings - prevBookings;
+            const bookingsPercent = prevBookings > 0 ? (bookingsDiff / prevBookings) * 100 : 0;
+            
+            bookingsValue.textContent = formatCurrency(currentBookings);
+            if (bookingsDiff >= 0) {
+                bookingsChange.className = 'change-positive';
+                bookingsChange.textContent = `▲ ${formatCurrency(bookingsDiff)} (${bookingsPercent.toFixed(1)}%)`;
+            } else {
+                bookingsChange.className = 'change-negative';
+                bookingsChange.textContent = `▼ ${formatCurrency(Math.abs(bookingsDiff))} (${Math.abs(bookingsPercent).toFixed(1)}%)`;
+            }
+            
+            // Hermetics
+            const currentHermetics = dashboardData.revenueHermetics[index];
+            const prevHermetics = dashboardData.revenueHermetics[prevIndex];
+            const hermeticsDiff = currentHermetics - prevHermetics;
+            const hermeticsPercent = (hermeticsDiff / prevHermetics) * 100;
+            
+            hermeticsValue.textContent = formatCurrency(currentHermetics);
+            if (hermeticsDiff >= 0) {
+                hermeticsChange.className = 'change-positive';
+                hermeticsChange.textContent = `▲ ${formatCurrency(hermeticsDiff)} (${hermeticsPercent.toFixed(2)}%) from Week ${prevIndex + 1}`;
+            } else {
+                hermeticsChange.className = 'change-negative';
+                hermeticsChange.textContent = `▼ ${formatCurrency(Math.abs(hermeticsDiff))} (${Math.abs(hermeticsPercent).toFixed(2)}%) from Week ${prevIndex + 1}`;
+            }
+            
+            // Precision
+            const currentPrecision = dashboardData.revenuePrecision[index];
+            const prevPrecision = dashboardData.revenuePrecision[prevIndex];
+            const precisionDiff = currentPrecision - prevPrecision;
+            const precisionPercent = (precisionDiff / prevPrecision) * 100;
+            
+            precisionValue.textContent = formatCurrency(currentPrecision);
+            if (precisionDiff >= 0) {
+                precisionChange.className = 'change-positive';
+                precisionChange.textContent = `▲ ${formatCurrency(precisionDiff)} (${precisionPercent.toFixed(2)}%) from Week ${prevIndex + 1}`;
+            } else {
+                precisionChange.className = 'change-negative';
+                precisionChange.textContent = `▼ ${formatCurrency(Math.abs(precisionDiff))} (${Math.abs(precisionPercent).toFixed(2)}%) from Week ${prevIndex + 1}`;
+            }
+        }
     </script>
 </body>
 </html>
