@@ -310,6 +310,27 @@
             border-radius: 3px;
             margin-right: 5px;
         }
+        
+        .monthly-total {
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px dashed #ccc;
+        }
+        
+        .monthly-total-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        
+        .monthly-total-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #0088FE;
+        }
     </style>
 </head>
 <body>
@@ -417,6 +438,12 @@
             <div class="chart-wrapper">
                 <canvas id="openOrdersChart"></canvas>
             </div>
+            
+            <!-- Monthly Total for Open Orders -->
+            <div class="monthly-total">
+                <div class="monthly-total-label">Total Open Orders for March 2025</div>
+                <div class="monthly-total-value">$952,954</div>
+            </div>
         </div>
         
         <!-- Business Revenue Changes -->
@@ -457,6 +484,7 @@
                         <li>Week 3 (Mar 16) had highest bookings at $423,300</li>
                         <li>Week 2 (Mar 9) had lowest bookings at $121,297</li>
                         <li>Progressive revenue increases week-over-week</li>
+                        <li>Total March open orders: $952,954</li>
                         <li>Total March revenue: $655,025 (combined from all business lines)</li>
                     </ul>
                 </div>
@@ -476,7 +504,8 @@
             bookings: [286703.12, 121296.78, 423299.53, 831299.43],
             revenueHermetics: [55195.41, 73593.88, 110390.82, 128789.29],
             revenuePrecision: [43058.33, 57411.10, 86116.65, 100469.43],
-            openOrders: [142943.07, 190590.76, 285886.15, 333533.84]
+            openOrders: [142943.07, 190590.76, 285886.15, 333533.84],
+            monthlyOpenOrders: 952954
         };
         
         // Chart.js configurations
