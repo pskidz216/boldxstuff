@@ -1,720 +1,181 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KPI Dashboard - March Weekly Comparison</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
-        
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        
-        .stat-card h2 {
-            margin-top: 0;
-            font-size: 1.2em;
-            color: #555;
-        }
-        
-        .stat-value {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        
-        .open-orders {
-            color: #0088FE;
-        }
-        
-        .revenue {
-            color: #00C49F;
-        }
-        
-        .bookings {
-            color: #8884d8;
-        }
-        
-        .change-positive {
-            color: #4CAF50;
-        }
-        
-        .change-negative {
-            color: #F44336;
-        }
-        
-        .chart-container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .chart-container h2 {
-            margin-top: 0;
-            color: #555;
-        }
-        
-        .chart-wrapper {
-            position: relative;
-            height: 300px;
-            margin-bottom: 15px;
-        }
-        
-        .grid-2-col {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .insights-box {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .insights-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        .insight-category h3 {
-            color: #0088FE;
-            margin-top: 0;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
-        }
-        
-        .insight-category ul {
-            padding-left: 20px;
-        }
-        
-        .insight-category li {
-            margin-bottom: 8px;
-        }
-        
-        .info-banner {
-            background-color: #e3f2fd;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 15px;
-        }
-        
-        .info-banner span {
-            font-weight: bold;
-        }
-        
-        .business-revenue-box {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .business-metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 15px;
-        }
-        
-        .metric-card {
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            padding: 15px;
-            text-align: center;
-        }
-        
-        .metric-card h3 {
-            margin-top: 0;
-            color: #333;
-            font-size: 1.1em;
-        }
-        
-        .metric-value {
-            font-size: 1.6em;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        
-        .metric-change {
-            font-size: 1em;
-            margin-top: 5px;
-        }
-        
-        .progress-container {
-            height: 24px;
-            background-color: #e9ecef;
-            border-radius: 4px;
-            position: relative;
-            margin: 15px 0;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            border-radius: 4px;
-            background-color: #4CAF50;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            transition: width 0.5s;
-        }
-        
-        .progress-bar.warning {
-            background-color: #FFC107;
-        }
-        
-        .progress-bar.danger {
-            background-color: #F44336;
-        }
-        
-        .goal-text {
-            text-align: right;
-            font-size: 0.85em;
-            color: #666;
-            margin-top: 5px;
-        }
-        
-        .week-selector {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        
-        .week-button {
-            padding: 8px 15px;
-            margin: 0 5px;
-            border: 1px solid #ddd;
-            background-color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .week-button.active {
-            background-color: #0088FE;
-            color: white;
-            border-color: #0088FE;
-        }
-        
-        .goal-comparison {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-        
-        .goal-item {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-        }
-        
-        .goal-label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .goal-value {
-            font-size: 1.2em;
-        }
-        
-        .dual-progress-container {
-            position: relative;
-            height: 24px;
-            background-color: #e9ecef;
-            border-radius: 4px;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-        
-        .dual-progress-bar {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            transition: width 0.5s;
-        }
-        
-        .dual-progress-bar.hermetics {
-            background-color: #00C49F;
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: 2;
-        }
-        
-        .dual-progress-bar.precision {
-            background-color: #0088FE;
-            position: absolute;
-            left: 20.07%;
-            top: 0;
-            z-index: 1;
-        }
-        
-        .legend {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin: 0 10px;
-        }
-        
-        .legend-color {
-            width: 15px;
-            height: 15px;
-            border-radius: 3px;
-            margin-right: 5px;
-        }
-        
-        .monthly-total {
-            text-align: center;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            border: 1px dashed #ccc;
-        }
-        
-        .monthly-total-label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        
-        .monthly-total-value {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #0088FE;
-        }
-    </style>
-</head>
-<body>
-    <div class="dashboard-container">
-        <h1>KPI Dashboard - March 2025 Weekly Comparison</h1>
-        
-        <!-- Week Selector -->
-        <div class="week-selector">
-            <button class="week-button" onclick="selectWeek(1)">Week 1 (Mar 2)</button>
-            <button class="week-button" onclick="selectWeek(2)">Week 2 (Mar 9)</button>
-            <button class="week-button" onclick="selectWeek(3)">Week 3 (Mar 16)</button>
-            <button class="week-button active" onclick="selectWeek(4)">Week 4 (Mar 23)</button>
+import React, { useState, useEffect } from 'react';
+import { 
+  LineChart, 
+  BarChart, 
+  ComposedChart,
+  Bar, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer 
+} from 'recharts';
+
+const SimpleDashboard = () => {
+  // Sample data - replace with your actual Excel data processing logic
+  const data = {
+    weeks: ['March 2', 'March 9', 'March 16', 'March 23', 'March 30'],
+    bookings: [286703.12, 121296.78, 423299.53, 261046.76, 0],
+    revenueHermetics: [85123.22, 113497.63, 141872.04, 198620.86, 28374.41],
+    revenuePrecision: [73838.96, 98451.95, 123064.94, 172290.91, 24612.99],
+    openOrders: [107023.63, 142698.17, 178372.71, 249721.80, 35674.54],
+    monthlyTotals: {
+      openOrders: 713491,
+      bookings: 1092346,
+      revenue: 1059748
+    }
+  };
+
+  const [activeWeek, setActiveWeek] = useState(5); // Default to most recent week
+
+  // Format currency values
+  const formatCurrency = (value) => {
+    if (value === undefined || value === null) return '$0';
+    return '$' + value.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  };
+
+  // Prepare chart data
+  const chartData = data.weeks.map((week, index) => ({
+    name: week,
+    'Revenue - Hermetics': data.revenueHermetics[index],
+    'Revenue - Precision': data.revenuePrecision[index],
+    'Bookings': data.bookings[index],
+    'Open Orders': data.openOrders[index]
+  }));
+  
+  // Calculate metrics for selected week
+  const weekIndex = activeWeek - 1;
+  const currentRevenue = data.revenueHermetics[weekIndex] + data.revenuePrecision[weekIndex];
+  const currentBookings = data.bookings[weekIndex];
+  const currentOpenOrders = data.openOrders[weekIndex];
+
+  return (
+    <div className="p-6 max-w-7xl mx-auto bg-white shadow-lg rounded-lg">
+      <h1 className="text-2xl font-bold text-center mb-6">
+        Bold X Company KPI Dashboard - March 2025
+        <span className="ml-2 inline-block bg-green-500 text-white text-xs py-1 px-2 rounded-full">UPDATED MAR 30</span>
+      </h1>
+
+      {/* Week Selector */}
+      <div className="flex flex-wrap justify-center gap-2 mb-6">
+        {data.weeks.map((week, index) => (
+          <button
+            key={index}
+            className={`px-3 py-1 border rounded-md ${activeWeek === index + 1 ? 'bg-blue-500 text-white' : 'bg-white'}`}
+            onClick={() => setActiveWeek(index + 1)}
+          >
+            Week {index + 1} ({week})
+          </button>
+        ))}
+      </div>
+
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="bg-gray-50 p-4 rounded-lg text-center">
+          <h2 className="text-gray-700 font-semibold">Revenue</h2>
+          <div className="text-2xl font-bold text-green-600">{formatCurrency(currentRevenue)}</div>
         </div>
-        
-        <!-- Summary Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h2>Open Orders</h2>
-                <div class="stat-value open-orders" id="open-orders-value">$333,534</div>
-                <div class="change-positive" id="open-orders-change">▲ $47,647 (16.67%)</div>
-            </div>
-            <div class="stat-card">
-                <h2>Revenue</h2>
-                <div class="stat-value revenue" id="revenue-value">$229,259</div>
-                <div class="change-positive" id="revenue-change">▲ $32,751 (16.67%)</div>
-            </div>
-            <div class="stat-card">
-                <h2>Bookings</h2>
-                <div class="stat-value bookings" id="bookings-value">$831,299</div>
-                <div class="change-positive" id="bookings-change">▲ $408,000 (96.4%)</div>
-            </div>
+        <div className="bg-gray-50 p-4 rounded-lg text-center">
+          <h2 className="text-gray-700 font-semibold">Bookings</h2>
+          <div className="text-2xl font-bold text-purple-600">{formatCurrency(currentBookings)}</div>
         </div>
-        
-        <!-- March 2025 Performance -->
-        <div class="chart-container">
-            <h2>March 2025 Weekly Revenue Performance</h2>
-            <div class="chart-wrapper">
-                <canvas id="marchPerformanceChart"></canvas>
-            </div>
-            <div class="info-banner">
-                <span>Key Insights:</span> March 16th data shows highest bookings of $423,300 while March 9th had the lowest at $121,297
-            </div>
+        <div className="bg-gray-50 p-4 rounded-lg text-center">
+          <h2 className="text-gray-700 font-semibold">Open Orders</h2>
+          <div className="text-2xl font-bold text-blue-600">{formatCurrency(currentOpenOrders)}</div>
         </div>
-        
-        <!-- Combined Business Goal Progress -->
-        <div class="chart-container">
-            <h2>Combined Business Line Goal Progress - March 2025</h2>
-            <h3>Total Progress - Combined Goal: $1,833,333</h3>
-            <div class="dual-progress-container">
-                <div class="dual-progress-bar hermetics" style="width:20.07%">H</div>
-                <div class="dual-progress-bar precision" style="width:15.66%">P</div>
-            </div>
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #00C49F;"></div>
-                    <span>Hermetics: 20.07%</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #0088FE;"></div>
-                    <span>Precision: 15.66%</span>
-                </div>
-                <div class="legend-item">
-                    <span>Combined: 35.73%</span>
-                </div>
-            </div>
-            <div class="goal-comparison">
-                <div class="goal-item">
-                    <div class="goal-label">Goal</div>
-                    <div class="goal-value">$1,833,333</div>
-                </div>
-                <div class="goal-item">
-                    <div class="goal-label">Current</div>
-                    <div class="goal-value">$655,025</div>
-                </div>
-                <div class="goal-item">
-                    <div class="goal-label">Remaining</div>
-                    <div class="goal-value">$1,178,308</div>
-                </div>
-                <div class="goal-item">
-                    <div class="goal-label">Progress</div>
-                    <div class="goal-value">35.73%</div>
-                </div>
-            </div>
-            
-            <div style="margin-top: 20px;">
-                <h3>Business Line Breakdown</h3>
-                <div class="business-metrics">
-                    <div class="metric-card">
-                        <h3>Hermetics</h3>
-                        <div class="metric-value">$367,969</div>
-                        <div class="goal-progress">20.07% of Combined Goal</div>
-                    </div>
-                    <div class="metric-card">
-                        <h3>Precision</h3>
-                        <div class="metric-value">$287,056</div>
-                        <div class="goal-progress">15.66% of Combined Goal</div>
-                    </div>
-                </div>
-            </div>
+      </div>
+
+      {/* Main Performance Chart */}
+      <div className="mb-8 p-4 bg-white border rounded-lg">
+        <h2 className="text-lg font-semibold mb-4">March 2025 Performance</h2>
+        <div className="h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
+              <Tooltip formatter={(value) => formatCurrency(value)} />
+              <Legend />
+              <Bar dataKey="Revenue - Hermetics" stackId="revenue" fill="#00C49F" />
+              <Bar dataKey="Revenue - Precision" stackId="revenue" fill="#0088FE" />
+              <Line type="monotone" dataKey="Bookings" stroke="#8884d8" strokeWidth={2} />
+            </ComposedChart>
+          </ResponsiveContainer>
         </div>
-        
-        <!-- Weekly Open Orders Trend -->
-        <div class="chart-container">
-            <h2>Open Orders - Weekly Trend</h2>
-            <div class="chart-wrapper">
-                <canvas id="openOrdersChart"></canvas>
-            </div>
-            
-            <!-- Monthly Total for Open Orders -->
-            <div class="monthly-total">
-                <div class="monthly-total-label">Total Open Orders for March 2025</div>
-                <div class="monthly-total-value">$952,954</div>
-            </div>
+      </div>
+
+      {/* Business Line Revenue */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="p-4 bg-white border rounded-lg">
+          <h2 className="text-lg font-semibold mb-4">Revenue by Business Line</h2>
+          <div className="h-60">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
+                <Tooltip formatter={(value) => formatCurrency(value)} />
+                <Legend />
+                <Line type="monotone" dataKey="Revenue - Hermetics" stroke="#00C49F" />
+                <Line type="monotone" dataKey="Revenue - Precision" stroke="#0088FE" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-        
-        <!-- Business Revenue Changes -->
-        <div class="business-revenue-box">
-            <h2>Business Revenue (Weekly Comparison)</h2>
-            <div class="business-metrics">
-                <div class="metric-card">
-                    <h3>Hermetics</h3>
-                    <div class="metric-value" id="hermetics-value">$128,789</div>
-                    <div class="metric-change change-positive" id="hermetics-change">▲ $18,399 (16.67%) from Week 3</div>
-                    <div class="metric-secondary">Week 3 (Mar 16): $110,391</div>
-                </div>
-                <div class="metric-card">
-                    <h3>Precision</h3>
-                    <div class="metric-value" id="precision-value">$100,469</div>
-                    <div class="metric-change change-positive" id="precision-change">▲ $14,353 (16.67%) from Week 3</div>
-                    <div class="metric-secondary">Week 3 (Mar 16): $86,117</div>
-                </div>
-            </div>
+
+        <div className="p-4 bg-white border rounded-lg">
+          <h2 className="text-lg font-semibold mb-4">Open Orders Trend</h2>
+          <div className="h-60">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
+                <Tooltip formatter={(value) => formatCurrency(value)} />
+                <Legend />
+                <Line type="monotone" dataKey="Open Orders" stroke="#0088FE" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-        
-        <!-- Key Insights -->
-        <div class="insights-box">
-            <h2>Key Insights</h2>
-            <div class="insights-grid">
-                <div class="insight-category">
-                    <h3>March Goal Progress</h3>
-                    <ul>
-                        <li>Combined Business Goal: $1,833,333</li>
-                        <li>Hermetics contribution: $367,969 (20.07% of goal)</li>
-                        <li>Precision contribution: $287,056 (15.66% of goal)</li>
-                        <li>Combined progress: 35.73% of total goal ($655,025 of $1,833,333)</li>
-                    </ul>
-                </div>
-                <div class="insight-category">
-                    <h3>Weekly Performance</h3>
-                    <ul>
-                        <li>Week 3 (Mar 16) had highest bookings at $423,300</li>
-                        <li>Week 2 (Mar 9) had lowest bookings at $121,297</li>
-                        <li>Progressive revenue increases week-over-week</li>
-                        <li>Total March open orders: $952,954</li>
-                        <li>Total March revenue: $655,025 (combined from all business lines)</li>
-                    </ul>
-                </div>
-            </div>
+      </div>
+
+      {/* Bookings Chart */}
+      <div className="p-4 bg-white border rounded-lg mb-8">
+        <h2 className="text-lg font-semibold mb-4">Bookings Trend</h2>
+        <div className="h-60">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
+              <Tooltip formatter={(value) => formatCurrency(value)} />
+              <Legend />
+              <Bar dataKey="Bookings" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
+      </div>
+
+      {/* Monthly Totals */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div className="bg-blue-50 p-4 rounded-lg text-center">
+          <h2 className="text-gray-700 font-semibold">Total Revenue</h2>
+          <div className="text-xl font-bold text-green-600">{formatCurrency(data.monthlyTotals.revenue)}</div>
+        </div>
+        <div className="bg-blue-50 p-4 rounded-lg text-center">
+          <h2 className="text-gray-700 font-semibold">Total Bookings</h2>
+          <div className="text-xl font-bold text-purple-600">{formatCurrency(data.monthlyTotals.bookings)}</div>
+        </div>
+        <div className="bg-blue-50 p-4 rounded-lg text-center">
+          <h2 className="text-gray-700 font-semibold">Total Open Orders</h2>
+          <div className="text-xl font-bold text-blue-600">{formatCurrency(data.monthlyTotals.openOrders)}</div>
+        </div>
+      </div>
     </div>
-    
-    <script>
-        // Formatter function for chart labels
-        function formatCurrency(value) {
-            return '$' + value.toLocaleString();
-        }
-        
-        // Dashboard data
-        const dashboardData = {
-            weeks: ['March 2', 'March 9', 'March 16', 'March 23'],
-            bookings: [286703.12, 121296.78, 423299.53, 831299.43],
-            revenueHermetics: [55195.41, 73593.88, 110390.82, 128789.29],
-            revenuePrecision: [43058.33, 57411.10, 86116.65, 100469.43],
-            openOrders: [142943.07, 190590.76, 285886.15, 333533.84],
-            monthlyOpenOrders: 952954
-        };
-        
-        // Chart.js configurations
-        window.onload = function() {
-            // March Performance Chart
-            const marchCtx = document.getElementById('marchPerformanceChart').getContext('2d');
-            const marchChart = new Chart(marchCtx, {
-                type: 'bar',
-                data: {
-                    labels: dashboardData.weeks,
-                    datasets: [
-                        {
-                            label: 'Revenue - Hermetics',
-                            data: dashboardData.revenueHermetics,
-                            backgroundColor: '#00C49F',
-                        },
-                        {
-                            label: 'Revenue - Precision',
-                            data: dashboardData.revenuePrecision,
-                            backgroundColor: '#0088FE',
-                        },
-                        {
-                            label: 'Bookings',
-                            data: dashboardData.bookings,
-                            backgroundColor: '#8884d8',
-                            type: 'line',
-                            borderColor: '#8884d8',
-                            fill: false,
-                            tension: 0.1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + formatCurrency(context.raw);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Open Orders Chart
-            const openOrdersCtx = document.getElementById('openOrdersChart').getContext('2d');
-            const openOrdersChart = new Chart(openOrdersCtx, {
-                type: 'line',
-                data: {
-                    labels: dashboardData.weeks,
-                    datasets: [
-                        {
-                            label: 'Weekly Open Orders',
-                            data: dashboardData.openOrders,
-                            borderColor: '#0088FE',
-                            backgroundColor: 'rgba(0, 136, 254, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.1,
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + formatCurrency(context.raw);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Set week 4 as default active week
-            selectWeek(4);
-        };
-        
-        // Function to update the dashboard based on selected week
-        function selectWeek(weekIndex) {
-            // Update active button
-            const buttons = document.querySelectorAll('.week-button');
-            buttons.forEach((btn, index) => {
-                if (index + 1 === weekIndex) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-            
-            // Adjust array index (0-based)
-            const index = weekIndex - 1;
-            
-            // Get previous week index, handle week 1 case
-            const prevIndex = index > 0 ? index - 1 : 0;
-            
-            // Update summary statistics
-            const openOrdersValue = document.getElementById('open-orders-value');
-            const openOrdersChange = document.getElementById('open-orders-change');
-            const revenueValue = document.getElementById('revenue-value');
-            const revenueChange = document.getElementById('revenue-change');
-            const bookingsValue = document.getElementById('bookings-value');
-            const bookingsChange = document.getElementById('bookings-change');
-            const hermeticsValue = document.getElementById('hermetics-value');
-            const hermeticsChange = document.getElementById('hermetics-change');
-            const precisionValue = document.getElementById('precision-value');
-            const precisionChange = document.getElementById('precision-change');
-            
-            // Open Orders
-            const currentOpenOrders = dashboardData.openOrders[index];
-            const prevOpenOrders = dashboardData.openOrders[prevIndex];
-            const openOrdersDiff = currentOpenOrders - prevOpenOrders;
-            const openOrdersPercent = (openOrdersDiff / prevOpenOrders) * 100;
-            
-            openOrdersValue.textContent = formatCurrency(currentOpenOrders);
-            if (openOrdersDiff >= 0) {
-                openOrdersChange.className = 'change-positive';
-                openOrdersChange.textContent = `▲ ${formatCurrency(openOrdersDiff)} (${openOrdersPercent.toFixed(2)}%)`;
-            } else {
-                openOrdersChange.className = 'change-negative';
-                openOrdersChange.textContent = `▼ ${formatCurrency(Math.abs(openOrdersDiff))} (${Math.abs(openOrdersPercent).toFixed(2)}%)`;
-            }
-            
-            // Revenue (combined Hermetics and Precision)
-            const currentRevenue = dashboardData.revenueHermetics[index] + dashboardData.revenuePrecision[index];
-            const prevRevenue = dashboardData.revenueHermetics[prevIndex] + dashboardData.revenuePrecision[prevIndex];
-            const revenueDiff = currentRevenue - prevRevenue;
-            const revenuePercent = (revenueDiff / prevRevenue) * 100;
-            
-            revenueValue.textContent = formatCurrency(currentRevenue);
-            if (revenueDiff >= 0) {
-                revenueChange.className = 'change-positive';
-                revenueChange.textContent = `▲ ${formatCurrency(revenueDiff)} (${revenuePercent.toFixed(2)}%)`;
-            } else {
-                revenueChange.className = 'change-negative';
-                revenueChange.textContent = `▼ ${formatCurrency(Math.abs(revenueDiff))} (${Math.abs(revenuePercent).toFixed(2)}%)`;
-            }
-            
-            // Bookings
-            const currentBookings = dashboardData.bookings[index];
-            const prevBookings = dashboardData.bookings[prevIndex];
-            const bookingsDiff = currentBookings - prevBookings;
-            const bookingsPercent = prevBookings > 0 ? (bookingsDiff / prevBookings) * 100 : 0;
-            
-            bookingsValue.textContent = formatCurrency(currentBookings);
-            if (bookingsDiff >= 0) {
-                bookingsChange.className = 'change-positive';
-                bookingsChange.textContent = `▲ ${formatCurrency(bookingsDiff)} (${bookingsPercent.toFixed(1)}%)`;
-            } else {
-                bookingsChange.className = 'change-negative';
-                bookingsChange.textContent = `▼ ${formatCurrency(Math.abs(bookingsDiff))} (${Math.abs(bookingsPercent).toFixed(1)}%)`;
-            }
-            
-            // Hermetics
-            const currentHermetics = dashboardData.revenueHermetics[index];
-            const prevHermetics = dashboardData.revenueHermetics[prevIndex];
-            const hermeticsDiff = currentHermetics - prevHermetics;
-            const hermeticsPercent = (hermeticsDiff / prevHermetics) * 100;
-            
-            hermeticsValue.textContent = formatCurrency(currentHermetics);
-            if (hermeticsDiff >= 0) {
-                hermeticsChange.className = 'change-positive';
-                hermeticsChange.textContent = `▲ ${formatCurrency(hermeticsDiff)} (${hermeticsPercent.toFixed(2)}%) from Week ${prevIndex + 1}`;
-            } else {
-                hermeticsChange.className = 'change-negative';
-                hermeticsChange.textContent = `▼ ${formatCurrency(Math.abs(hermeticsDiff))} (${Math.abs(hermeticsPercent).toFixed(2)}%) from Week ${prevIndex + 1}`;
-            }
-            
-            // Precision
-            const currentPrecision = dashboardData.revenuePrecision[index];
-            const prevPrecision = dashboardData.revenuePrecision[prevIndex];
-            const precisionDiff = currentPrecision - prevPrecision;
-            const precisionPercent = (precisionDiff / prevPrecision) * 100;
-            
-            precisionValue.textContent = formatCurrency(currentPrecision);
-            if (precisionDiff >= 0) {
-                precisionChange.className = 'change-positive';
-                precisionChange.textContent = `▲ ${formatCurrency(precisionDiff)} (${precisionPercent.toFixed(2)}%) from Week ${prevIndex + 1}`;
-            } else {
-                precisionChange.className = 'change-negative';
-                precisionChange.textContent = `▼ ${formatCurrency(Math.abs(precisionDiff))} (${Math.abs(precisionPercent).toFixed(2)}%) from Week ${prevIndex + 1}`;
-            }
-        }
-    </script>
-</body>
-</html>
+  );
+};
+
+export default SimpleDashboard;
