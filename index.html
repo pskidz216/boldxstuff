@@ -3,249 +3,581 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple KPI Dashboard - March 2025</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <title>Business Metrics Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <!-- ReCharts & Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.7.2/prop-types.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.1.9/Recharts.min.js"></script>
     <style>
+        :root {
+            --primary: #E70033;
+            --secondary: #394544;
+            --dark: #1b1b1b;
+        }
         body {
+            background-color: #f7f7f7;
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
         }
         .dashboard-container {
             max-width: 1200px;
             margin: 0 auto;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             padding: 20px;
         }
-        h1 {
-            text-align: center;
-            color: #333;
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
             margin-bottom: 20px;
         }
-        .update-badge {
-            display: inline-block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
+        .card-title {
+            color: var(--secondary);
+            font-size: 1.25rem;
             font-weight: bold;
-            margin-left: 10px;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            background-color: white;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .stat-card h2 {
-            margin-top: 0;
-            font-size: 1.2em;
-            color: #555;
-        }
-        .stat-value {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .open-orders { color: #0088FE; }
-        .revenue { color: #00C49F; }
-        .bookings { color: #8884d8; }
-        .chart-container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        .chart-wrapper {
-            position: relative;
-            height: 300px;
             margin-bottom: 15px;
         }
-        .monthly-total {
-            text-align: center;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            border: 1px dashed #ccc;
-        }
-        .monthly-total-label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        .monthly-total-value {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #0088FE;
-        }
-        .business-metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 15px;
-        }
-        .metric-card {
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            padding: 15px;
-            text-align: center;
+        .summary-card {
+            min-height: 150px;
         }
         .metric-value {
-            font-size: 1.6em;
+            font-size: 1.75rem;
             font-weight: bold;
-            margin: 10px 0;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+        .change-positive {
+            color: #10B981;
+        }
+        .change-negative {
+            color: var(--primary);
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .comparison-table th {
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        .subtitle {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+        .header {
+            color: var(--dark);
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
-        <h1>KPI Dashboard - March 2025 <span class="update-badge">UPDATED MAR 30</span></h1>
+        <h1 class="header">Business Metrics Dashboard</h1>
         
-        <!-- Summary Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h2>Open Orders</h2>
-                <div class="stat-value open-orders" id="open-orders-value">$380,211</div>
-            </div>
-            <div class="stat-card">
-                <h2>Revenue</h2>
-                <div class="stat-value revenue" id="revenue-value">$1,177,248</div>
-            </div>
-            <div class="stat-card">
-                <h2>Bookings</h2>
-                <div class="stat-value bookings" id="bookings-value">$1,162,833</div>
-            </div>
-        </div>
-        
-        <!-- March 2025 Performance -->
-        <div class="chart-container">
-            <h2>March 2025 Weekly Performance</h2>
-            <div class="chart-wrapper">
-                <canvas id="performanceChart"></canvas>
-            </div>
-        </div>
-        
-        <!-- Business Line Breakdown -->
-        <div class="chart-container">
-            <h2>Business Line Breakdown</h2>
-            <div class="business-metrics">
-                <div class="metric-card">
-                    <h3>Hermetics</h3>
-                    <div class="metric-value" style="color: #00C49F;">$624,170</div>
-                </div>
-                <div class="metric-card">
-                    <h3>Precision</h3>
-                    <div class="metric-value" style="color: #0088FE;">$553,078</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Monthly Totals -->
-        <div class="monthly-total">
-            <div class="monthly-total-label">Total Revenue for March 2025</div>
-            <div class="monthly-total-value">$1,177,248</div>
-        </div>
+        <div id="dashboard"></div>
     </div>
-    
+
     <script>
-        // Dashboard data
-        const dashboardData = {
-            weeks: ['Feb 23', 'March 2', 'March 9', 'March 16', 'March 23'],
-            bookings: [70486, 286703, 121297, 423300, 261047],
-            revenueHermetics: [98193, 142703, 127073, 199519, 56682],
-            revenuePrecision: [62106, 90002, 134947, 205204, 60818],
-            openOrders: [23047, 93743, 39660, 138406, 85354],
-            monthlyTotals: {
-                openOrders: 380211,
-                bookings: 1162833,
-                revenue: 1177248,
-                hermetics: 624170,
-                precision: 553078
-            }
+        // Data
+        const data = {
+            revenueData: [
+                { month: "3/2024", hermetics: 564261.15, precision: 569275.40, total: 1133536.55 },
+                { month: "4/2024", hermetics: 703982.97, precision: 725480.63, total: 1429463.60 },
+                { month: "5/2024", hermetics: 814418.93, precision: 698518.19, total: 1512937.12 },
+                { month: "6/2024", hermetics: 742537.59, precision: 748992.29, total: 1491529.88 },
+                { month: "7/2024", hermetics: 624277.83, precision: 866287.91, total: 1490565.74 },
+                { month: "8/2024", hermetics: 722492.67, precision: 730574.41, total: 1453067.08 },
+                { month: "9/2024", hermetics: 605358.23, precision: 950448.77, total: 1555807.00 },
+                { month: "10/2024", hermetics: 919286.44, precision: 585456.69, total: 1504743.13 },
+                { month: "11/2024", hermetics: 626499.89, precision: 440115.64, total: 1066615.53 },
+                { month: "12/2024", hermetics: 586414.31, precision: 535228.99, total: 1121643.30 },
+                { month: "1/2025", hermetics: 649577.61, precision: 561801.69, total: 1211379.30 },
+                { month: "2/2025", hermetics: 624169.95, precision: 553078.00, total: 1177247.95 },
+                { month: "3/2025", hermetics: 567488.16, precision: 492259.75, total: 1059747.91 }
+            ],
+            openOrdersData: [
+                { month: "9/2024", hermetics: 5291.88, precision: 955.80, total: 6247.68 },
+                { month: "10/2024", hermetics: 0, precision: 1528.50, total: 1528.50 },
+                { month: "11/2024", hermetics: 0, precision: 14343.68, total: 14343.68 },
+                { month: "12/2024", hermetics: 27141.54, precision: 9062.10, total: 36203.64 },
+                { month: "1/2025", hermetics: 98068.98, precision: 11171.47, total: 109240.45 },
+                { month: "2/2025", hermetics: 169549.29, precision: 210661.37, total: 380210.66 },
+                { month: "3/2025", hermetics: 396909.58, precision: 316581.28, total: 713490.86 },
+                { month: "4/2025", hermetics: 619823.99, precision: 898409.98, total: 1518233.97 },
+                { month: "5/2025", hermetics: 665370.09, precision: 744376.33, total: 1409746.42 },
+                { month: "6/2025", hermetics: 685899.16, precision: 396753.44, total: 1082652.60 },
+                { month: "7/2025", hermetics: 580245.20, precision: 228387.62, total: 808632.82 },
+                { month: "8/2025", hermetics: 522850.45, precision: 139873.00, total: 662723.45 },
+                { month: "9/2025", hermetics: 552446.61, precision: 180765.51, total: 733212.12 }
+            ],
+            bookingsData: [
+                { month: "3/2024", total: 911400.55 },
+                { month: "4/2024", total: 756025.82 },
+                { month: "5/2024", total: 756864.74 },
+                { month: "6/2024", total: 742570.81 },
+                { month: "7/2024", total: 819445.18 },
+                { month: "8/2024", total: 1382273.48 },
+                { month: "9/2024", total: 1113741.16 },
+                { month: "10/2024", total: 1133899.81 },
+                { month: "11/2024", total: 1156325.55 },
+                { month: "12/2024", total: 2547026.76 },
+                { month: "1/2025", total: 385969.12 },
+                { month: "2/2025", total: 817957.04 },
+                { month: "3/2025", total: 1092346.19 }
+            ]
         };
-        
-        // Format currency
+
+        // Function to format currency values
         function formatCurrency(value) {
-            return '$' + value.toLocaleString();
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
         }
         
-        // Initialize chart
-        window.onload = function() {
-            // Set Chart.js defaults
-            Chart.defaults.responsive = true;
-            Chart.defaults.maintainAspectRatio = false;
-            
-            // Performance Chart
-            const ctx = document.getElementById('performanceChart').getContext('2d');
-            const chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: dashboardData.weeks,
-                    datasets: [
-                        {
-                            label: 'Revenue - Hermetics',
-                            data: dashboardData.revenueHermetics,
-                            backgroundColor: '#00C49F',
-                            stack: 'revenue'
-                        },
-                        {
-                            label: 'Revenue - Precision',
-                            data: dashboardData.revenuePrecision,
-                            backgroundColor: '#0088FE',
-                            stack: 'revenue'
-                        },
-                        {
-                            label: 'Bookings',
-                            data: dashboardData.bookings,
-                            type: 'line',
-                            borderColor: '#8884d8',
-                            backgroundColor: 'rgba(136, 132, 216, 0.2)',
-                            borderWidth: 2,
-                            fill: false
-                        }
-                    ]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + formatCurrency(context.raw);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Update summary statistics
-            document.getElementById('open-orders-value').textContent = formatCurrency(dashboardData.monthlyTotals.openOrders);
-            document.getElementById('revenue-value').textContent = formatCurrency(dashboardData.monthlyTotals.revenue);
-            document.getElementById('bookings-value').textContent = formatCurrency(dashboardData.monthlyTotals.bookings);
+        // Calculations for metrics
+        const revenueLastMonth = data.revenueData[data.revenueData.length - 1];
+        const revenuePreviousMonth = data.revenueData[data.revenueData.length - 2];
+        const revenueChange = {
+            total: revenueLastMonth.total - revenuePreviousMonth.total,
+            hermetics: revenueLastMonth.hermetics - revenuePreviousMonth.hermetics,
+            precision: revenueLastMonth.precision - revenuePreviousMonth.precision,
+            totalPercentage: ((revenueLastMonth.total - revenuePreviousMonth.total) / revenuePreviousMonth.total * 100).toFixed(2),
+            hermeticsPercentage: ((revenueLastMonth.hermetics - revenuePreviousMonth.hermetics) / revenuePreviousMonth.hermetics * 100).toFixed(2),
+            precisionPercentage: ((revenueLastMonth.precision - revenuePreviousMonth.precision) / revenuePreviousMonth.precision * 100).toFixed(2)
         };
+
+        const openOrdersLastMonth = data.openOrdersData[data.openOrdersData.length - 1];
+        const openOrdersPreviousMonth = data.openOrdersData[data.openOrdersData.length - 2];
+        const openOrdersChange = {
+            total: openOrdersLastMonth.total - openOrdersPreviousMonth.total,
+            hermetics: openOrdersLastMonth.hermetics - openOrdersPreviousMonth.hermetics,
+            precision: openOrdersLastMonth.precision - openOrdersPreviousMonth.precision,
+            totalPercentage: ((openOrdersLastMonth.total - openOrdersPreviousMonth.total) / openOrdersPreviousMonth.total * 100).toFixed(2),
+            hermeticsPercentage: ((openOrdersLastMonth.hermetics - openOrdersPreviousMonth.hermetics) / openOrdersPreviousMonth.hermetics * 100).toFixed(2),
+            precisionPercentage: ((openOrdersLastMonth.precision - openOrdersPreviousMonth.precision) / openOrdersPreviousMonth.precision * 100).toFixed(2)
+        };
+
+        const bookingsLastMonth = data.bookingsData[data.bookingsData.length - 1];
+        const bookingsPreviousMonth = data.bookingsData[data.bookingsData.length - 2];
+        const bookingsChange = {
+            total: bookingsLastMonth.total - bookingsPreviousMonth.total,
+            totalPercentage: ((bookingsLastMonth.total - bookingsPreviousMonth.total) / bookingsPreviousMonth.total * 100).toFixed(2)
+        };
+
+        function Dashboard() {
+            const { 
+                BarChart, Bar, LineChart, Line, AreaChart, Area, PieChart, Pie, Cell,
+                XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
+            } = Recharts;
+
+            // Colors
+            const COLORS = ['#E70033', '#394544', '#1b1b1b', '#999999'];
+
+            return React.createElement('div', null, [
+                // Summary Cards
+                React.createElement('div', { className: 'grid-3', key: 'summary-cards' }, [
+                    // Revenue Card
+                    React.createElement('div', { className: 'card summary-card', key: 'revenue-card' }, [
+                        React.createElement('h2', { className: 'card-title' }, 'Revenue'),
+                        React.createElement('p', { className: 'metric-value' }, formatCurrency(revenueLastMonth.total)),
+                        React.createElement('div', { 
+                            className: revenueChange.totalPercentage >= 0 ? 'change-positive' : 'change-negative' 
+                        }, [
+                            React.createElement('span', { style: { fontWeight: 'bold' } }, `${revenueChange.totalPercentage}%`),
+                            React.createElement('span', null, ' vs previous month')
+                        ]),
+                        React.createElement('div', { className: 'subtitle', style: { marginTop: '10px' } }, [
+                            React.createElement('div', null, `Hermetics: ${formatCurrency(revenueLastMonth.hermetics)} (${revenueChange.hermeticsPercentage}%)`),
+                            React.createElement('div', null, `Precision: ${formatCurrency(revenueLastMonth.precision)} (${revenueChange.precisionPercentage}%)`)
+                        ])
+                    ]),
+                    
+                    // Open Orders Card
+                    React.createElement('div', { className: 'card summary-card', key: 'open-orders-card' }, [
+                        React.createElement('h2', { className: 'card-title' }, 'Open Orders'),
+                        React.createElement('p', { className: 'metric-value' }, formatCurrency(openOrdersLastMonth.total)),
+                        React.createElement('div', { 
+                            className: openOrdersChange.totalPercentage >= 0 ? 'change-positive' : 'change-negative' 
+                        }, [
+                            React.createElement('span', { style: { fontWeight: 'bold' } }, `${openOrdersChange.totalPercentage}%`),
+                            React.createElement('span', null, ' vs previous month')
+                        ]),
+                        React.createElement('div', { className: 'subtitle', style: { marginTop: '10px' } }, [
+                            React.createElement('div', null, `Hermetics: ${formatCurrency(openOrdersLastMonth.hermetics)} (${openOrdersChange.hermeticsPercentage}%)`),
+                            React.createElement('div', null, `Precision: ${formatCurrency(openOrdersLastMonth.precision)} (${openOrdersChange.precisionPercentage}%)`)
+                        ])
+                    ]),
+                    
+                    // Bookings Card
+                    React.createElement('div', { className: 'card summary-card', key: 'bookings-card' }, [
+                        React.createElement('h2', { className: 'card-title' }, 'Customer Bookings'),
+                        React.createElement('p', { className: 'metric-value' }, formatCurrency(bookingsLastMonth.total)),
+                        React.createElement('div', { 
+                            className: bookingsChange.totalPercentage >= 0 ? 'change-positive' : 'change-negative' 
+                        }, [
+                            React.createElement('span', { style: { fontWeight: 'bold' } }, `${bookingsChange.totalPercentage}%`),
+                            React.createElement('span', null, ' vs previous month')
+                        ])
+                    ])
+                ]),
+                
+                // Revenue Trends
+                React.createElement('div', { className: 'card', key: 'revenue-trends' }, [
+                    React.createElement('h2', { className: 'card-title' }, 'Revenue Trends'),
+                    React.createElement(ResponsiveContainer, { width: '100%', height: 400 }, 
+                        React.createElement(LineChart, { 
+                            data: data.revenueData,
+                            margin: { top: 5, right: 30, left: 20, bottom: 5 } 
+                        }, [
+                            React.createElement(CartesianGrid, { strokeDasharray: '3 3' }),
+                            React.createElement(XAxis, { dataKey: 'month' }),
+                            React.createElement(YAxis, { 
+                                tickFormatter: (value) => `$${(value / 1000000).toFixed(1)}M` 
+                            }),
+                            React.createElement(Tooltip, { 
+                                formatter: (value) => [formatCurrency(value)] 
+                            }),
+                            React.createElement(Legend),
+                            React.createElement(Line, { 
+                                type: 'monotone',
+                                dataKey: 'hermetics',
+                                name: 'Hermetics',
+                                stroke: '#E70033',
+                                strokeWidth: 2
+                            }),
+                            React.createElement(Line, { 
+                                type: 'monotone',
+                                dataKey: 'precision',
+                                name: 'Precision',
+                                stroke: '#394544',
+                                strokeWidth: 2
+                            }),
+                            React.createElement(Line, { 
+                                type: 'monotone',
+                                dataKey: 'total',
+                                name: 'Total Revenue',
+                                stroke: '#1b1b1b',
+                                strokeWidth: 2
+                            })
+                        ])
+                    )
+                ]),
+                
+                // Open Orders Trends
+                React.createElement('div', { className: 'card', key: 'open-orders-trends' }, [
+                    React.createElement('h2', { className: 'card-title' }, 'Open Orders Trends'),
+                    React.createElement(ResponsiveContainer, { width: '100%', height: 400 }, 
+                        React.createElement(AreaChart, { 
+                            data: data.openOrdersData,
+                            margin: { top: 5, right: 30, left: 20, bottom: 5 } 
+                        }, [
+                            React.createElement(CartesianGrid, { strokeDasharray: '3 3' }),
+                            React.createElement(XAxis, { dataKey: 'month' }),
+                            React.createElement(YAxis, { 
+                                tickFormatter: (value) => `$${(value / 1000000).toFixed(1)}M` 
+                            }),
+                            React.createElement(Tooltip, { 
+                                formatter: (value) => [formatCurrency(value)] 
+                            }),
+                            React.createElement(Legend),
+                            React.createElement(Area, { 
+                                type: 'monotone',
+                                dataKey: 'hermetics',
+                                name: 'Hermetics',
+                                stackId: '1',
+                                stroke: '#E70033',
+                                fill: '#E70033'
+                            }),
+                            React.createElement(Area, { 
+                                type: 'monotone',
+                                dataKey: 'precision',
+                                name: 'Precision',
+                                stackId: '1',
+                                stroke: '#394544',
+                                fill: '#394544'
+                            })
+                        ])
+                    )
+                ]),
+                
+                // Customer Bookings Trends
+                React.createElement('div', { className: 'card', key: 'bookings-trends' }, [
+                    React.createElement('h2', { className: 'card-title' }, 'Customer Bookings Trends'),
+                    React.createElement(ResponsiveContainer, { width: '100%', height: 400 }, 
+                        React.createElement(BarChart, { 
+                            data: data.bookingsData,
+                            margin: { top: 5, right: 30, left: 20, bottom: 5 } 
+                        }, [
+                            React.createElement(CartesianGrid, { strokeDasharray: '3 3' }),
+                            React.createElement(XAxis, { dataKey: 'month' }),
+                            React.createElement(YAxis, { 
+                                tickFormatter: (value) => `$${(value / 1000000).toFixed(1)}M` 
+                            }),
+                            React.createElement(Tooltip, { 
+                                formatter: (value) => [formatCurrency(value)] 
+                            }),
+                            React.createElement(Legend),
+                            React.createElement(Bar, { 
+                                dataKey: 'total',
+                                name: 'Total Bookings',
+                                fill: '#E70033'
+                            })
+                        ])
+                    )
+                ]),
+                
+                // Business Line Breakdown
+                React.createElement('div', { className: 'grid-2', key: 'business-line-breakdown' }, [
+                    // Revenue Breakdown
+                    React.createElement('div', { className: 'card', key: 'revenue-breakdown' }, [
+                        React.createElement('h2', { className: 'card-title' }, 'Revenue Breakdown (Latest Month)'),
+                        React.createElement(ResponsiveContainer, { width: '100%', height: 300 }, 
+                            React.createElement(PieChart, null, [
+                                React.createElement(Pie, { 
+                                    data: [
+                                        { name: 'Hermetics', value: revenueLastMonth.hermetics },
+                                        { name: 'Precision', value: revenueLastMonth.precision }
+                                    ],
+                                    cx: '50%',
+                                    cy: '50%',
+                                    labelLine: true,
+                                    outerRadius: 100,
+                                    fill: '#8884d8',
+                                    dataKey: 'value',
+                                    nameKey: 'name',
+                                    label: ({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`
+                                }, [
+                                    React.createElement(Cell, { key: 'cell-0', fill: '#E70033' }),
+                                    React.createElement(Cell, { key: 'cell-1', fill: '#394544' })
+                                ]),
+                                React.createElement(Tooltip, { 
+                                    formatter: (value) => [formatCurrency(value)] 
+                                })
+                            ])
+                        )
+                    ]),
+                    
+                    // Open Orders Breakdown
+                    React.createElement('div', { className: 'card', key: 'open-orders-breakdown' }, [
+                        React.createElement('h2', { className: 'card-title' }, 'Open Orders Breakdown (Latest Month)'),
+                        React.createElement(ResponsiveContainer, { width: '100%', height: 300 }, 
+                            React.createElement(PieChart, null, [
+                                React.createElement(Pie, { 
+                                    data: [
+                                        { name: 'Hermetics', value: openOrdersLastMonth.hermetics },
+                                        { name: 'Precision', value: openOrdersLastMonth.precision }
+                                    ],
+                                    cx: '50%',
+                                    cy: '50%',
+                                    labelLine: true,
+                                    outerRadius: 100,
+                                    fill: '#8884d8',
+                                    dataKey: 'value',
+                                    nameKey: 'name',
+                                    label: ({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`
+                                }, [
+                                    React.createElement(Cell, { key: 'cell-0', fill: '#E70033' }),
+                                    React.createElement(Cell, { key: 'cell-1', fill: '#394544' })
+                                ]),
+                                React.createElement(Tooltip, { 
+                                    formatter: (value) => [formatCurrency(value)] 
+                                })
+                            ])
+                        )
+                    ])
+                ]),
+                
+                // Month vs Last Month Comparison
+                React.createElement('div', { className: 'card', key: 'month-comparison' }, [
+                    React.createElement('h2', { className: 'card-title' }, 'Month vs Last Month Highlights'),
+                    React.createElement('div', { className: 'grid-3', style: { marginTop: '20px' } }, [
+                        // Revenue comparison
+                        React.createElement('div', null, [
+                            React.createElement('h3', { style: { fontWeight: 'bold', color: '#394544', marginBottom: '15px' } }, 'Revenue'),
+                            React.createElement('div', { 
+                                style: { 
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '10px',
+                                    borderBottom: '1px solid #eee',
+                                    fontWeight: 'bold'
+                                } 
+                            }, [
+                                React.createElement('span', null, 'Metric'),
+                                React.createElement('span', null, 'This Month'),
+                                React.createElement('span', null, 'Change')
+                            ]),
+                            React.createElement('div', { 
+                                style: { 
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '10px',
+                                    borderBottom: '1px solid #eee'
+                                } 
+                            }, [
+                                React.createElement('span', null, 'Total'),
+                                React.createElement('span', null, formatCurrency(revenueLastMonth.total)),
+                                React.createElement('span', { 
+                                    style: { color: revenueChange.totalPercentage >= 0 ? '#10B981' : '#E70033' } 
+                                }, `${revenueChange.totalPercentage}%`)
+                            ]),
+                            React.createElement('div', { 
+                                style: { 
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '10px',
+                                    borderBottom: '1px solid #eee'
+                                } 
+                            }, [
+                                React.createElement('span', null, 'Hermetics'),
+                                React.createElement('span', null, formatCurrency(revenueLastMonth.hermetics)),
+                                React.createElement('span', { 
+                                    style: { color: revenueChange.hermeticsPercentage >= 0 ? '#10B981' : '#E70033' } 
+                                }, `${revenueChange.hermeticsPercentage}%`)
+                            ]),
+                            React.createElement('div', { 
+                                style: { 
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '10px'
+                                } 
+                            }, [
+                                React.createElement('span', null, 'Precision'),
+                                React.createElement('span', null, formatCurrency(revenueLastMonth.precision)),
+                                React.createElement('span', { 
+                                    style: { color: revenueChange.precisionPercentage >= 0 ? '#10B981' : '#E70033' } 
+                                }, `${revenueChange.precisionPercentage}%`)
+                            ])
+                        ]),
+                        
+                        // Open Orders comparison
+                        React.createElement('div', null, [
+                            React.createElement('h3', { style: { fontWeight: 'bold', color: '#394544', marginBottom: '15px' } }, 'Open Orders'),
+                            React.createElement('div', { 
+                                style: { 
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '10px',
+                                    borderBottom: '1px solid #eee',
+                                    fontWeight: 'bold'
+                                } 
+                            }, [
+                                React.createElement('span', null, 'Metric'),
+                                React.createElement('span', null, 'This Month'),
+                                React.createElement('span', null, 'Change')
+                            ]),
+                            React.createElement('div', { 
+                                style: { 
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '10px',
+                                    borderBottom: '1px solid #eee'
+                                } 
+                            }, [
+                                React.createElement('span', null, 'Total'),
+                                React.createElement('span', null, formatCurrency(openOrdersLastMonth.total)),
+                                React.createElement('span', { 
+                                    style: { color: openOrdersChange.totalPercentage >= 0 ? '#10B981' : '#E70033' } 
+                                }, `${openOrdersChange.totalPercentage}%`)
+                            ]),
+                            React.createElement('div', { 
+                                style: { 
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '10px',
+                                    borderBottom: '1px solid #eee'
+                                } 
+                            }, [
+                                React.createElement('span', null, 'Hermetics'),
+                                React.createElement('span', null, formatCurrency(openOrdersLastMonth.hermetics)),
+                                React.createElement('span', { 
+                                    style: { color: openOrdersChange.hermeticsPercentage >= 0 ? '#10B981' : '#E70033' } 
+                                }, `${openOrdersChange.hermeticsPercentage}%`)
+                            ]),
+                            React.createElement('div', { 
+                                style: { 
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '10px'
+                                } 
+                            }, [
+                                React.createElement('span', null, 'Precision'),
+                                React.createElement('span', null, formatCurrency(openOrdersLastMonth.precision)),
+                                React.createElement('span', { 
+                                    style: { color: openOrdersChange.precisionPercentage >= 0 ? '#10B981' : '#E70033' } 
+                                }, `${openOrdersChange.precisionPercentage}%`)
+                            ])
+                        ]),
+                        
+                        // Bookings comparison
+                        React.createElement('div', null, [
+                            React.createElement('h3', { style: { fontWeight: 'bold', color: '#394544', marginBottom: '15px' } }, 'Customer Bookings'),
+                            React.createElement('div', { 
+                                style: { 
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '10px',
+                                    borderBottom: '1px solid #eee',
+                                    fontWeight: 'bold'
+                                } 
+                            }, [
+                                React.createElement('span', null, 'Metric'),
+                                React.createElement('span', null, 'This Month'),
+                                React.createElement('span', null, 'Change')
+                            ]),
+                            React.createElement('div', { 
+                                style: { 
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '10px'
+                                } 
+                            }, [
+                                React.createElement('span', null, 'Total'),
+                                React.createElement('span', null, formatCurrency(bookingsLastMonth.total)),
+                                React.createElement('span', { 
+                                    style: { color: bookingsChange.totalPercentage >= 0 ? '#10B981' : '#E70033' } 
+                                }, `${bookingsChange.totalPercentage}%`)
+                            ])
+                        ])
+                    ])
+                ])
+            ]);
+        }
+
+        // Render the dashboard
+        ReactDOM.render(
+            React.createElement(Dashboard),
+            document.getElementById('dashboard')
+        );
     </script>
 </body>
 </html>
