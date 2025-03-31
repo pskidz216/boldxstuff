@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { 
   LineChart, 
   BarChart, 
@@ -13,24 +14,48 @@ import {
   ResponsiveContainer 
 } from 'recharts';
 
-const SimpleDashboard = () => {
-  // Sample data - replace with your actual Excel data processing logic
-  const data = {
-    weeks: ['March 2', 'March 9', 'March 16', 'March 23', 'March 30'],
-    bookings: [286703.12, 121296.78, 423299.53, 261046.76, 0],
-    revenueHermetics: [85123.22, 113497.63, 141872.04, 198620.86, 28374.41],
-    revenuePrecision: [73838.96, 98451.95, 123064.94, 172290.91, 24612.99],
-    openOrders: [107023.63, 142698.17, 178372.71, 249721.80, 35674.54],
+/**
+ * KPI Dashboard Component
+ * 
+ * Displays key performance indicators for Bold X Company with interactive
+ * weekly data visualization for revenue, bookings, and open orders.
+ * 
+ * @component
+ * @example
+ * // Basic usage with default data
+ * <KPIDashboard />
+ * 
+ * // With custom data
+ * <KPIDashboard data={customDataObject} title="Custom Dashboard" />
+ */
+const KPIDashboard = ({ data: externalData, title }) => {
+  // Default data extracted from Excel files
+  const defaultData = {
+    weeks: ['Feb 23', 'March 2', 'March 9', 'March 16', 'March 23'],
+    bookings: [70486.35, 286703.12, 121296.78, 423299.53, 261046.76],
+    revenueHermetics: [98193.17, 142703.05, 127073.19, 199518.75, 56681.79],
+    revenuePrecision: [62106.27, 90002.03, 134947.21, 205204.24, 60818.25],
+    openOrders: [23046.88, 93743.15, 39660.34, 138405.99, 85354.30],
     monthlyTotals: {
-      openOrders: 713491,
-      bookings: 1092346,
-      revenue: 1059748
+      openOrders: 380210.66,
+      bookings: 1162832.54, // Sum of weekly values
+      revenue: 1177247.95,
+      hermetics: 624169.95,
+      precision: 553078.00
     }
   };
 
-  const [activeWeek, setActiveWeek] = useState(5); // Default to most recent week
+  // Use provided data or default data
+  const data = externalData || defaultData;
 
-  // Format currency values
+  // State for active week selection
+  const [activeWeek, setActiveWeek] = useState(3); // Default to Week 3 (March 16)
+
+  /**
+   * Formats a number as currency
+   * @param {number} value - Number to format
+   * @returns {string} Formatted currency string
+   */
   const formatCurrency = (value) => {
     if (value === undefined || value === null) return '$0';
     return '$' + value.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -54,7 +79,7 @@ const SimpleDashboard = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto bg-white shadow-lg rounded-lg">
       <h1 className="text-2xl font-bold text-center mb-6">
-        Bold X Company KPI Dashboard - March 2025
+        {title}
         <span className="ml-2 inline-block bg-green-500 text-white text-xs py-1 px-2 rounded-full">UPDATED MAR 30</span>
       </h1>
 
@@ -87,6 +112,18 @@ const SimpleDashboard = () => {
         </div>
       </div>
 
+      {/* Business Revenue Comparison */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="bg-gray-50 p-4 rounded-lg text-center">
+          <h2 className="text-gray-700 font-semibold">Hermetics Revenue</h2>
+          <div className="text-2xl font-bold text-teal-600">{formatCurrency(data.revenueHermetics[weekIndex])}</div>
+        </div>
+        <div className="bg-gray-50 p-4 rounded-lg text-center">
+          <h2 className="text-gray-700 font-semibold">Precision Revenue</h2>
+          <div className="text-2xl font-bold text-blue-600">{formatCurrency(data.revenuePrecision[weekIndex])}</div>
+        </div>
+      </div>
+
       {/* Main Performance Chart */}
       <div className="mb-8 p-4 bg-white border rounded-lg">
         <h2 className="text-lg font-semibold mb-4">March 2025 Performance</h2>
@@ -103,6 +140,9 @@ const SimpleDashboard = () => {
               <Line type="monotone" dataKey="Bookings" stroke="#8884d8" strokeWidth={2} />
             </ComposedChart>
           </ResponsiveContainer>
+        </div>
+        <div className="mt-4 p-3 bg-blue-50 rounded-md">
+          <span className="font-semibold">Key Insight:</span> March 16th data shows highest bookings at $423,300 with strong revenue performance
         </div>
       </div>
 
@@ -174,8 +214,53 @@ const SimpleDashboard = () => {
           <div className="text-xl font-bold text-blue-600">{formatCurrency(data.monthlyTotals.openOrders)}</div>
         </div>
       </div>
+
+      {/* Business Line Totals */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="bg-teal-50 p-4 rounded-lg text-center">
+          <h2 className="text-gray-700 font-semibold">Total Hermetics Revenue</h2>
+          <div className="text-xl font-bold text-teal-600">{formatCurrency(data.monthlyTotals.hermetics)}</div>
+          <div className="text-sm text-gray-500">53% of total revenue</div>
+        </div>
+        <div className="bg-blue-50 p-4 rounded-lg text-center">
+          <h2 className="text-gray-700 font-semibold">Total Precision Revenue</h2>
+          <div className="text-xl font-bold text-blue-600">{formatCurrency(data.monthlyTotals.precision)}</div>
+          <div className="text-sm text-gray-500">47% of total revenue</div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default SimpleDashboard;
+// PropTypes for type checking
+KPIDashboard.propTypes = {
+  /**
+   * Dashboard data object
+   */
+  data: PropTypes.shape({
+    weeks: PropTypes.arrayOf(PropTypes.string),
+    bookings: PropTypes.arrayOf(PropTypes.number),
+    revenueHermetics: PropTypes.arrayOf(PropTypes.number),
+    revenuePrecision: PropTypes.arrayOf(PropTypes.number),
+    openOrders: PropTypes.arrayOf(PropTypes.number),
+    monthlyTotals: PropTypes.shape({
+      openOrders: PropTypes.number,
+      bookings: PropTypes.number,
+      revenue: PropTypes.number,
+      hermetics: PropTypes.number,
+      precision: PropTypes.number
+    })
+  }),
+  /**
+   * Dashboard title
+   */
+  title: PropTypes.string
+};
+
+// Default props
+KPIDashboard.defaultProps = {
+  title: 'Bold X Company KPI Dashboard - March 2025',
+  data: null // Will use default data if not provided
+};
+
+export default KPIDashboard;
