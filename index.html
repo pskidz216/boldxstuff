@@ -99,6 +99,7 @@
 <body>
     <div class="dashboard-container">
         <h1 class="header">Business Metrics Dashboard</h1>
+        <div class="updated-info">Last Updated: April 6, 2025</div>
         
         <div id="dashboard"></div>
     </div>
@@ -107,7 +108,6 @@
         // Data
         const data = {
             revenueData: [
-                { month: "3/2024", hermetics: 564261.15, precision: 569275.40, total: 1133536.55 },
                 { month: "4/2024", hermetics: 703982.97, precision: 725480.63, total: 1429463.60 },
                 { month: "5/2024", hermetics: 814418.93, precision: 698518.19, total: 1512937.12 },
                 { month: "6/2024", hermetics: 742537.59, precision: 748992.29, total: 1491529.88 },
@@ -119,38 +119,47 @@
                 { month: "12/2024", hermetics: 586414.31, precision: 535228.99, total: 1121643.30 },
                 { month: "1/2025", hermetics: 649577.61, precision: 561801.69, total: 1211379.30 },
                 { month: "2/2025", hermetics: 624169.95, precision: 553078.00, total: 1177247.95 },
-                { month: "3/2025", hermetics: 567488.16, precision: 492259.75, total: 1059747.91 }
+                { month: "3/2025", hermetics: 635571.20, precision: 619193.40, total: 1254764.60 },
+                { month: "4/2025", hermetics: 59551.73, precision: 60108.35, total: 119660.08 }
             ],
             openOrdersData: [
                 { month: "9/2024", hermetics: 5291.88, precision: 955.80, total: 6247.68 },
                 { month: "10/2024", hermetics: 0, precision: 1528.50, total: 1528.50 },
-                { month: "11/2024", hermetics: 0, precision: 14343.68, total: 14343.68 },
-                { month: "12/2024", hermetics: 27141.54, precision: 9062.10, total: 36203.64 },
-                { month: "1/2025", hermetics: 98068.98, precision: 11171.47, total: 109240.45 },
-                { month: "2/2025", hermetics: 169549.29, precision: 210661.37, total: 380210.66 },
-                { month: "3/2025", hermetics: 396909.58, precision: 316581.28, total: 713490.86 },
-                { month: "4/2025", hermetics: 619823.99, precision: 898409.98, total: 1518233.97 },
-                { month: "5/2025", hermetics: 665370.09, precision: 744376.33, total: 1409746.42 },
-                { month: "6/2025", hermetics: 685899.16, precision: 396753.44, total: 1082652.60 },
-                { month: "7/2025", hermetics: 580245.20, precision: 228387.62, total: 808632.82 },
-                { month: "8/2025", hermetics: 522850.45, precision: 139873.00, total: 662723.45 },
-                { month: "9/2025", hermetics: 552446.61, precision: 180765.51, total: 733212.12 }
+                { month: "11/2024", hermetics: 0, precision: 39858.68, total: 39858.68 },
+                { month: "12/2024", hermetics: 27141.54, precision: 8162.32, total: 35303.86 },
+                { month: "1/2025", hermetics: 97068.98, precision: 10512.77, total: 107581.75 },
+                { month: "2/2025", hermetics: 169549.29, precision: 222416.19, total: 391965.48 },
+                { month: "3/2025", hermetics: 396909.58, precision: 200485.39, total: 597394.97 },
+                { month: "4/2025", hermetics: 619823.99, precision: 836949.47, total: 1456773.46 },
+                { month: "5/2025", hermetics: 665370.09, precision: 759002.94, total: 1424373.03 },
+                { month: "6/2025", hermetics: 685899.16, precision: 398778.27, total: 1084677.43 },
+                { month: "7/2025", hermetics: 580245.20, precision: 289347.82, total: 869593.02 },
+                { month: "8/2025", hermetics: 522850.45, precision: 210627.92, total: 733478.37 },
+                { month: "9/2025", hermetics: 552446.61, precision: 216797.96, total: 769244.57 }
             ],
             bookingsData: [
-                { month: "3/2024", total: 911400.55 },
                 { month: "4/2024", total: 756025.82 },
                 { month: "5/2024", total: 756864.74 },
-                { month: "6/2024", total: 742570.81 },
+                { month: "6/2024", total: 824785.81 },
                 { month: "7/2024", total: 819445.18 },
                 { month: "8/2024", total: 1382273.48 },
                 { month: "9/2024", total: 1113741.16 },
-                { month: "10/2024", total: 1133899.81 },
+                { month: "10/2024", total: 1152369.81 },
                 { month: "11/2024", total: 1156325.55 },
                 { month: "12/2024", total: 2547026.76 },
-                { month: "1/2025", total: 385969.12 },
+                { month: "1/2025", total: 388729.12 },
                 { month: "2/2025", total: 817957.04 },
-                { month: "3/2025", total: 1092346.19 }
-            ]
+                { month: "3/2025", total: 1128010.44 },
+                { month: "4/2025", total: 149895.72 }
+            ],
+            retentionData: {
+                retentionRate: 54.84,
+                activeCustomers: 68,
+                inactiveCustomers: 342,
+                unretainedCustomers: 56,
+                newCustomers: 0,
+                totalCustomers: 466
+            }
         };
 
         // Function to format currency values
@@ -356,65 +365,92 @@
                 ]),
                 
                 // Business Line Breakdown
-                React.createElement('div', { className: 'grid-2', key: 'business-line-breakdown' }, [
-                    // Revenue Breakdown
-                    React.createElement('div', { className: 'card', key: 'revenue-breakdown' }, [
-                        React.createElement('h2', { className: 'card-title' }, 'Revenue Breakdown (Latest Month)'),
-                        React.createElement(ResponsiveContainer, { width: '100%', height: 300 }, 
-                            React.createElement(PieChart, null, [
-                                React.createElement(Pie, { 
-                                    data: [
-                                        { name: 'Hermetics', value: revenueLastMonth.hermetics },
-                                        { name: 'Precision', value: revenueLastMonth.precision }
-                                    ],
-                                    cx: '50%',
-                                    cy: '50%',
-                                    labelLine: true,
-                                    outerRadius: 100,
-                                    fill: '#8884d8',
-                                    dataKey: 'value',
-                                    nameKey: 'name',
-                                    label: ({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`
-                                }, [
-                                    React.createElement(Cell, { key: 'cell-0', fill: '#E70033' }),
-                                    React.createElement(Cell, { key: 'cell-1', fill: '#394544' })
-                                ]),
-                                React.createElement(Tooltip, { 
-                                    formatter: (value) => [formatCurrency(value)] 
-                                })
-                            ])
-                        )
+                // Customer Retention Metrics
+            React.createElement('div', { className: 'card', key: 'retention-metrics' }, [
+                React.createElement('h2', { className: 'card-title' }, 'Customer Retention Metrics'),
+                React.createElement('div', { className: 'grid-4' }, [
+                    React.createElement('div', { className: 'kpi-card' }, [
+                        React.createElement('div', { className: 'kpi-title' }, 'Retention Rate'),
+                        React.createElement('div', { className: 'kpi-value' }, `${data.retentionData.retentionRate}%`),
+                        React.createElement('div', { className: 'kpi-subtitle' }, 'of customers retained')
                     ]),
-                    
-                    // Open Orders Breakdown
-                    React.createElement('div', { className: 'card', key: 'open-orders-breakdown' }, [
-                        React.createElement('h2', { className: 'card-title' }, 'Open Orders Breakdown (Latest Month)'),
-                        React.createElement(ResponsiveContainer, { width: '100%', height: 300 }, 
-                            React.createElement(PieChart, null, [
-                                React.createElement(Pie, { 
-                                    data: [
-                                        { name: 'Hermetics', value: openOrdersLastMonth.hermetics },
-                                        { name: 'Precision', value: openOrdersLastMonth.precision }
-                                    ],
-                                    cx: '50%',
-                                    cy: '50%',
-                                    labelLine: true,
-                                    outerRadius: 100,
-                                    fill: '#8884d8',
-                                    dataKey: 'value',
-                                    nameKey: 'name',
-                                    label: ({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`
-                                }, [
-                                    React.createElement(Cell, { key: 'cell-0', fill: '#E70033' }),
-                                    React.createElement(Cell, { key: 'cell-1', fill: '#394544' })
-                                ]),
-                                React.createElement(Tooltip, { 
-                                    formatter: (value) => [formatCurrency(value)] 
-                                })
-                            ])
-                        )
+                    React.createElement('div', { className: 'kpi-card' }, [
+                        React.createElement('div', { className: 'kpi-title' }, 'Active Customers'),
+                        React.createElement('div', { className: 'kpi-value' }, data.retentionData.activeCustomers),
+                        React.createElement('div', { className: 'kpi-subtitle' }, `of ${data.retentionData.totalCustomers} total`)
+                    ]),
+                    React.createElement('div', { className: 'kpi-card' }, [
+                        React.createElement('div', { className: 'kpi-title' }, 'Unretained Customers'),
+                        React.createElement('div', { className: 'kpi-value', style: { color: '#E70033' } }, data.retentionData.unretainedCustomers),
+                        React.createElement('div', { className: 'kpi-subtitle' }, 'customers lost')
+                    ]),
+                    React.createElement('div', { className: 'kpi-card' }, [
+                        React.createElement('div', { className: 'kpi-title' }, 'New Customers'),
+                        React.createElement('div', { className: 'kpi-value', style: { color: '#394544' } }, data.retentionData.newCustomers),
+                        React.createElement('div', { className: 'kpi-subtitle' }, 'acquired this month')
                     ])
+                ])
+            ]),
+            
+            React.createElement('div', { className: 'grid-2', key: 'business-line-breakdown' }, [
+                // Revenue Breakdown
+                React.createElement('div', { className: 'card', key: 'revenue-breakdown' }, [
+                    React.createElement('h2', { className: 'card-title' }, 'Revenue Breakdown (Latest Month)'),
+                    React.createElement(ResponsiveContainer, { width: '100%', height: 300 }, 
+                        React.createElement(PieChart, null, [
+                            React.createElement(Pie, { 
+                                data: [
+                                    { name: 'Hermetics', value: revenueLastMonth.hermetics },
+                                    { name: 'Precision', value: revenueLastMonth.precision }
+                                ],
+                                cx: '50%',
+                                cy: '50%',
+                                labelLine: true,
+                                outerRadius: 100,
+                                fill: '#8884d8',
+                                dataKey: 'value',
+                                nameKey: 'name',
+                                label: ({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`
+                            }, [
+                                React.createElement(Cell, { key: 'cell-0', fill: '#E70033' }),
+                                React.createElement(Cell, { key: 'cell-1', fill: '#394544' })
+                            ]),
+                            React.createElement(Tooltip, { 
+                                formatter: (value) => [formatCurrency(value)] 
+                            })
+                        ])
+                    )
                 ]),
+                
+                // Open Orders Breakdown
+                React.createElement('div', { className: 'card', key: 'open-orders-breakdown' }, [
+                    React.createElement('h2', { className: 'card-title' }, 'Open Orders Breakdown (Latest Month)'),
+                    React.createElement(ResponsiveContainer, { width: '100%', height: 300 }, 
+                        React.createElement(PieChart, null, [
+                            React.createElement(Pie, { 
+                                data: [
+                                    { name: 'Hermetics', value: openOrdersLastMonth.hermetics },
+                                    { name: 'Precision', value: openOrdersLastMonth.precision }
+                                ],
+                                cx: '50%',
+                                cy: '50%',
+                                labelLine: true,
+                                outerRadius: 100,
+                                fill: '#8884d8',
+                                dataKey: 'value',
+                                nameKey: 'name',
+                                label: ({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`
+                            }, [
+                                React.createElement(Cell, { key: 'cell-0', fill: '#E70033' }),
+                                React.createElement(Cell, { key: 'cell-1', fill: '#394544' })
+                            ]),
+                            React.createElement(Tooltip, { 
+                                formatter: (value) => [formatCurrency(value)] 
+                            })
+                        ])
+                    )
+                ])
+            ]),
                 
                 // Month vs Last Month Comparison
                 React.createElement('div', { className: 'card', key: 'month-comparison' }, [
