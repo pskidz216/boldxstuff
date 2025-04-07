@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Business Metrics Dashboard</title>
     <!-- Tailwind CSS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
@@ -379,20 +379,20 @@
                     React.createElement('div', { className: 'retention-card' }, [
                         React.createElement('div', { className: 'retention-title' }, 'Customer Retention Rate'),
                         React.createElement('div', { className: 'retention-value' }, `${data.retentionData.retentionRate}%`),
-                        React.createElement('div', { className: 'retention-subtitle' }, 'Based on active vs. total customers'),
-                        React.createElement('div', { className: 'customer-stats' }, [
-                            React.createElement('div', { className: 'stat-item' }, [
-                                React.createElement('div', { className: 'stat-number' }, data.retentionData.activeCustomers),
-                                React.createElement('div', { className: 'stat-text' }, 'Active Customers')
-                            ]),
-                            React.createElement('div', { className: 'stat-item' }, [
-                                React.createElement('div', { className: 'stat-number negative' }, data.retentionData.unretainedCustomers),
-                                React.createElement('div', { className: 'stat-text' }, 'Unretained Customers')
-                            ]),
-                            React.createElement('div', { className: 'stat-item total' }, [
-                                React.createElement('div', { className: 'stat-number' }, data.retentionData.totalCustomers),
-                                React.createElement('div', { className: 'stat-text' }, 'Total Customer Base')
-                            ])
+                        
+                        React.createElement('div', { className: 'stat-item' }, [
+                            React.createElement('div', { className: 'stat-label' }, 'Active'),
+                            React.createElement('div', { className: 'stat-number' }, data.retentionData.activeCustomers)
+                        ]),
+                        
+                        React.createElement('div', { className: 'stat-item' }, [
+                            React.createElement('div', { className: 'stat-label' }, 'Unretained'),
+                            React.createElement('div', { className: 'stat-number negative' }, data.retentionData.unretainedCustomers)
+                        ]),
+                        
+                        React.createElement('div', { className: 'stat-item total' }, [
+                            React.createElement('div', { className: 'stat-label' }, 'Total Base'),
+                            React.createElement('div', { className: 'stat-number' }, data.retentionData.totalCustomers)
                         ])
                     ]),
                     
