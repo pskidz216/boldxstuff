@@ -100,6 +100,12 @@
     <div class="dashboard-container">
         <h1 class="header">Business Metrics Dashboard</h1>
         <div class="updated-info">Last Updated: April 6, 2025</div>
+        <div class="note-box">
+            <div class="note-icon">ℹ️</div>
+            <div class="note-content">
+                <strong>Note:</strong> A detailed customer open order report (CustomerOpenOrder_byDueDate_20250407030042.xls) is available with transaction-level data as of April 7, 2025. This report contains individual order details but is not reflected in the summary metrics shown here.
+            </div>
+        </div>
         
         <div id="dashboard"></div>
     </div>
@@ -368,26 +374,62 @@
                 // Customer Retention Metrics
             React.createElement('div', { className: 'card', key: 'retention-metrics' }, [
                 React.createElement('h2', { className: 'card-title' }, 'Customer Retention Metrics'),
-                React.createElement('div', { className: 'grid-4' }, [
-                    React.createElement('div', { className: 'kpi-card' }, [
-                        React.createElement('div', { className: 'kpi-title' }, 'Retention Rate'),
-                        React.createElement('div', { className: 'kpi-value' }, `${data.retentionData.retentionRate}%`),
-                        React.createElement('div', { className: 'kpi-subtitle' }, 'of customers retained')
+                React.createElement('div', { className: 'grid-2' }, [
+                    // Left side - main retention metric
+                    React.createElement('div', { className: 'retention-card' }, [
+                        React.createElement('div', { className: 'retention-title' }, 'Customer Retention Rate'),
+                        React.createElement('div', { className: 'retention-value' }, `${data.retentionData.retentionRate}%`),
+                        React.createElement('div', { className: 'retention-subtitle' }, 'Based on active vs. total customers'),
+                        React.createElement('div', { className: 'customer-stats' }, [
+                            React.createElement('div', { className: 'stat-item' }, [
+                                React.createElement('div', { className: 'stat-number' }, data.retentionData.activeCustomers),
+                                React.createElement('div', { className: 'stat-text' }, 'Active Customers')
+                            ]),
+                            React.createElement('div', { className: 'stat-item' }, [
+                                React.createElement('div', { className: 'stat-number negative' }, data.retentionData.unretainedCustomers),
+                                React.createElement('div', { className: 'stat-text' }, 'Unretained Customers')
+                            ]),
+                            React.createElement('div', { className: 'stat-item total' }, [
+                                React.createElement('div', { className: 'stat-number' }, data.retentionData.totalCustomers),
+                                React.createElement('div', { className: 'stat-text' }, 'Total Customer Base')
+                            ])
+                        ])
                     ]),
-                    React.createElement('div', { className: 'kpi-card' }, [
-                        React.createElement('div', { className: 'kpi-title' }, 'Active Customers'),
-                        React.createElement('div', { className: 'kpi-value' }, data.retentionData.activeCustomers),
-                        React.createElement('div', { className: 'kpi-subtitle' }, `of ${data.retentionData.totalCustomers} total`)
-                    ]),
-                    React.createElement('div', { className: 'kpi-card' }, [
-                        React.createElement('div', { className: 'kpi-title' }, 'Unretained Customers'),
-                        React.createElement('div', { className: 'kpi-value', style: { color: '#E70033' } }, data.retentionData.unretainedCustomers),
-                        React.createElement('div', { className: 'kpi-subtitle' }, 'customers lost')
-                    ]),
-                    React.createElement('div', { className: 'kpi-card' }, [
-                        React.createElement('div', { className: 'kpi-title' }, 'New Customers'),
-                        React.createElement('div', { className: 'kpi-value', style: { color: '#394544' } }, data.retentionData.newCustomers),
-                        React.createElement('div', { className: 'kpi-subtitle' }, 'acquired this month')
+                    
+                    // Right side - donut chart
+                    React.createElement('div', null, [
+                        React.createElement(ResponsiveContainer, { width: '100%', height: 300 }, 
+                            React.createElement(PieChart, null, [
+                                React.createElement(Pie, { 
+                                    data: [
+                                        { name: 'Active', value: data.retentionData.activeCustomers },
+                                        { name: 'Inactive', value: data.retentionData.inactiveCustomers },
+                                        { name: 'Unretained', value: data.retentionData.unretainedCustomers }
+                                    ],
+                                    cx: '50%',
+                                    cy: '50%',
+                                    innerRadius: 60,
+                                    outerRadius: 100,
+                                    fill: '#8884d8',
+                                    dataKey: 'value',
+                                    nameKey: 'name',
+                                    label: ({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`
+                                }, [
+                                    React.createElement(Cell, { key: 'cell-0', fill: '#10B981' }), // Active - green
+                                    React.createElement(Cell, { key: 'cell-1', fill: '#394544' }), // Inactive - dark gray
+                                    React.createElement(Cell, { key: 'cell-2', fill: '#E70033' }) // Unretained - red
+                                ]),
+                                React.createElement(Tooltip)
+                            ])
+                        ),
+                        React.createElement('div', { 
+                            style: { 
+                                textAlign: 'center', 
+                                fontSize: '0.9rem', 
+                                color: '#394544',
+                                marginTop: '10px'
+                            } 
+                        }, 'Customer Distribution')
                     ])
                 ])
             ]),
