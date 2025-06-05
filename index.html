@@ -1,82 +1,377 @@
-html
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Sales Dashboard</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
-    <!-- PapaParse -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/styles.css">
+    <title>Customer Sales Performance Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .metric-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .dashboard-section {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .row-green { background-color: rgba(39, 174, 96, 0.1); }
+        .row-yellow { background-color: rgba(243, 156, 18, 0.1); }
+        .row-red { background-color: rgba(231, 76, 60, 0.1); }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .bg-green {
+            background-color: #27ae60;
+        }
+        
+        .bg-yellow {
+            background-color: #f39c12;
+        }
+        
+        .bg-red {
+            background-color: #e74c3c;
+        }
+        
+        .bg-purple {
+            background-color: #8e44ad;
+        }
+
+        .currency {
+            font-family: monospace;
+            font-weight: 500;
+        }
+
+        .growth-years {
+            background: #27ae60;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .metrics-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container my-5">
-        <h1 class="text-center mb-4">Customer Sales Dashboard</h1>
+    <div class="container">
+        <div class="header">
+            <h1>Customer Sales Performance Dashboard</h1>
+            <p>Revenue Analysis & Growth Tracking (2020-2025)</p>
+        </div>
 
-        <!-- Total Sales Chart -->
-        <div class="row mb-5">
-            <div class="col-12">
-                <h3>Total Sales by Year</h3>
-                <canvas id="salesChart"></canvas>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-number" style="color: #27ae60;" id="highPerformers">0</div>
+                <div class="metric-label">High Performers ($500K+)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number" style="color: #f39c12;" id="midPerformers">0</div>
+                <div class="metric-label">Mid Performers ($50K - $500K)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number" style="color: #e74c3c;" id="lowPerformers">0</div>
+                <div class="metric-label">Low Performers (Under $50K)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number" style="color: #8e44ad;" id="growthCompanies">0</div>
+                <div class="metric-label">High Growth Potential</div>
             </div>
         </div>
 
-        <!-- Customers with Sales >= $50k -->
-        <div class="row mb-5">
-            <div class="col-12">
-                <h3>Customers with Sales ≥ $50k (Any Year)</h3>
-                <div class="table-responsive">
-                    <table class="table table-striped" id="highSalesTable">
-                        <thead>
-                            <tr>
-                                <th>Customer</th>
-                                <th>Year 20</th>
-                                <th>Year 21</th>
-                                <th>Year 22</th>
-                                <th>Year 23</th>
-                                <th>Year 24</th>
-                                <th>Year 25</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+        <div class="dashboard-section">
+            <div class="section-title">
+                <div class="status-indicator bg-green"></div>
+                High Performing Companies ($500K+)
+            </div>
+            <div class="table-container">
+                <table id="highPerformersTable">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>2020</th>
+                            <th>2021</th>
+                            <th>2022</th>
+                            <th>2023</th>
+                            <th>2024</th>
+                            <th>2025</th>
+                            <th>Peak Year</th>
+                            <th>Peak Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Customers with 3+ Years of Positive Growth -->
-        <div class="row">
-            <div class="col-12">
-                <h3>Customers with 3+ Years of Positive Growth</h3>
-                <div class="table-responsive">
-                    <table class="table table-striped" id="growthTable">
-                        <thead>
-                            <tr>
-                                <th>Customer</th>
-                                <th>Year 20</th>
-                                <th>Year 21</th>
-                                <th>Year 22</th>
-                                <th>Year 23</th>
-                                <th>Year 24</th>
-                                <th>Year 25</th>
-                                <th>Growth Years</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+        <div class="dashboard-section">
+            <div class="section-title">
+                <div class="status-indicator bg-yellow"></div>
+                Mid-Range Companies ($50K - $500K)
+            </div>
+            <div class="table-container">
+                <table id="midPerformersTable">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>2020</th>
+                            <th>2021</th>
+                            <th>2022</th>
+                            <th>2023</th>
+                            <th>2024</th>
+                            <th>2025</th>
+                            <th>Peak Year</th>
+                            <th>Peak Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <div class="section-title">
+                <div class="status-indicator bg-purple"></div>
+                High Growth Potential Companies
+            </div>
+            <div class="table-container">
+                <table id="growthTable">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>2020</th>
+                            <th>2021</th>
+                            <th>2022</th>
+                            <th>2023</th>
+                            <th>2024</th>
+                            <th>2025</th>
+                            <th>Growth Years</th>
+                            <th>Current Tier</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript -->
-    <script src="script.js"></script>
+    <script>
+        // Function to parse dollar amounts
+        function parseDollar(str) {
+            if (typeof str === 'number') return str;
+            return parseInt(str.replace(/[\$,]/g, '')) || 0;
+        }
+
+        // Function to format dollar amounts
+        function formatDollar(num) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+            }).format(num);
+        }
+
+        // Function to get peak year and revenue
+        function getPeakYearAndRevenue(revenues, years) {
+            let peak = Math.max(...revenues);
+            let peakIndex = revenues.indexOf(peak);
+            return {
+                year: years[peakIndex],
+                revenue: peak
+            };
+        }
+
+        // Function to count growth years
+        function countGrowthYears(revenues) {
+            let growthYears = 0;
+            for (let i = 1; i < revenues.length; i++) {
+                if (revenues[i] > revenues[i-1]) growthYears++;
+            }
+            return growthYears;
+        }
+
+        // Function to determine company tier
+        function getCompanyTier(peak) {
+            if (peak >= 500000) return 'High ($500K+)';
+            if (peak >= 50000) return 'Mid ($50K-$500K)';
+            return 'Low (<$50K)';
+        }
+
+        // Process the raw data
+        const companies = rawData.split('\n').map(line => {
+            const [name, ...values] = line.split('\t');
+            if (values.length !== 6) return null;
+            
+            const revenues = values.map(parseDollar);
+            const years = [2020, 2021, 2022, 2023, 2024, 2025];
+            const peak = Math.max(...revenues);
+            const {year: peakYear, revenue: peakRevenue} = getPeakYearAndRevenue(revenues, years);
+            const growthYears = countGrowthYears(revenues);
+            
+            return {
+                name,
+                revenues,
+                peak,
+                peakYear,
+                peakRevenue,
+                growthYears,
+                tier: getCompanyTier(peak)
+            };
+        }).filter(Boolean);
+
+        // Separate companies into categories
+        const highPerformers = companies.filter(c => c.peak >= 500000);
+        const midPerformers = companies.filter(c => c.peak >= 50000 && c.peak < 500000);
+        const lowPerformers = companies.filter(c => c.peak < 50000);
+        const growthCompanies = companies.filter(c => c.growthYears >= 3);
+
+        // Update metrics
+        document.getElementById('highPerformers').textContent = highPerformers.length;
+        document.getElementById('midPerformers').textContent = midPerformers.length;
+        document.getElementById('lowPerformers').textContent = lowPerformers.length;
+        document.getElementById('growthCompanies').textContent = growthCompanies.length;
+
+        // Function to populate tables
+        function populateTable(tableId, data, includeGrowth = false) {
+            const tbody = document.getElementById(tableId).querySelector('tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(company => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${company.name}</td>
+                    ${company.revenues.map(r => `<td class="currency">${formatDollar(r)}</td>`).join('')}
+                    ${includeGrowth ? 
+                        `<td><span class="growth-years">${company.growthYears}</span></td>
+                         <td>${company.tier}</td>` :
+                        `<td>${company.peakYear}</td>
+                         <td class="currency">${formatDollar(company.peakRevenue)}</td>`
+                    }
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Populate all tables
+        populateTable('highPerformersTable', highPerformers);
+        populateTable('midPerformersTable', midPerformers);
+        populateTable('growthTable', growthCompanies, true);
+    </script>
 </body>
 </html>
-
