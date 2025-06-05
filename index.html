@@ -270,7 +270,163 @@
             </div>
         </div>
     </div>
-
+<script>
+// Raw customer data
+const rawData = `Abrasive Technology	$0	$0	$0	$0	$0	$0
+Action Research Corporation	$1,491	$0	$0	$13,486	$2,120	$3,157
+Active Electronics Plc	$6,991	$0	$5,971	$0	$0	$0
+Adamco Industries, LLC	$4,265	$812	$0	$0	$0	$0
+ADI American Distributors, LLC	$0	$0	$1,599	$0	$0	$0
+AE&C Services LLC	$0	$0	$2,211	$0	$2,290	$0
+Air Cost Control USA, LLC	$0	$0	$0	$0	$7,750	$5,532
+Air Electro, Inc.	$170,429	$67,237	$23,507	$34,140	$211,437	$85,084
+AI-TEK Instruments, LLC	$190,228	$99,530	$39,118	$162,155	$360,620	$82,118
+ALA Germany GmbH	$0	$0	$0	$0	$0	$2,455
+ALA UK	$0	$2,243	$1,591	$0	$0	$0
+Allied Defense Industries, LLC	$0	$9,717	$0	$0	$0	$0
+AMC Technology, Inc./Mipro	$0	$0	$0	$0	$0	$18,050
+American Aerospace Controls, Inc	$0	$63,741	$35,894	$15,678	$5,051	$4,494
+Ametek Aerospace	$18,426	$31,186	$65,881	$40,060	$41,174	$10,670
+Ao Yi Aerospace & Technology Co Ltd (China Aero)	$0	$0	$0	$0	$3,345	$7,694
+API INMET, INC.	$1,000	$0	$0	$0	$0	$0
+Apollo Aerospace Components	$40,934	$90,390	$100,789	$77,794	$0	$0
+Apollo Aerospace Components Ltd.	$29,557	$0	$7,876	$0	$0	$0
+Arizona Components Company, Inc	$40,224	$37,624	$0	$38,485	$20,743	$0
+Arkwin Industries, Inc.	$62,866	$0	$0	$0	$0	$0
+Arrow Electronics	$1,048,866	$364,018	$305,486	$268,496	$555,279	$174,627
+Asa Environmental Products, Inc.	$0	$576	$0	$0	$0	$0
+ASteelflash Group- C/O Catalyst	$25,249	$5,708	$0	$0	$0	$0
+Astemo Americas, Inc.	$0	$7,386	$0	$0	$7,064	$0
+Astro Machine Co., Inc.	$37,876	$0	$0	$0	$0	$0
+Astute Electronics, Inc.	$6,773	$0	$0	$0	$0	$0
+Auxitrol Weston Advanced Sensors	$83,565	$33,559	$13,281	$994	$0	$0
+B&J Tech, Inc.	$0	$0	$0	$0	$0	$1,066
+Baker Hughes - Reuter-Stokes,  LLC	$145,079	$128,144	$91,438	$277,084	$188,143	$61,800
+Baker Hughes Sensing&Inspection(Changzhou) Co.,Ltd	$7,339	$0	$629	$91,306	$147,615	$26,593
+Banner Service Corporation	$0	$0	$0	$0	$116,078	$0
+Benchmark Connector	$236,654	$30,282	$102,047	$161,083	$273,825	$146,497
+Benchmark Electronics (Thailand) PCL	$0	$0	$0	$0	$0	$152,930
+Beretta USA Corporation	$166,807	$192,774	$140,136	$177,317	$59,147	$15,007
+Biomerics	$51,634	$50,924	$85,567	$48,513	$35,270	$21,634
+BJG Electronics Inc.	$1,542	$2,774	$0	$0	$0	$0
+Blue Origin, LLC	$0	$0	$0	$0	$13,596	$0
+BMD Electronics & Hardware Inc.	$0	$0	$0	$4,715	$24,266	$6,503
+Boeing Distribution Services, Inc.	$0	$14,664	$0	$159,896	$0	$0
+Boston Scientific De Costa Rica SRL	$0	$115,269	$200,800	$159,332	$108,511	$57,684
+Boston Scientific SADRA (formerly  Claret Medical)	$183,328	$0	$0	$0	$0	$0
+BTC Electronics	$0	$0	$4,190	$0	$0	$0
+Carnegie Mellon Chemistry	$7,944	$2,832	$0	$0	$0	$0
+CAT REMAN POWERTRAIN IN	$11,845	$56,100	$145,860	$67,320	$103,238	$103,621
+Caterpillar Engine Systems, Inc.	$985,146	$1,192,679	$962,954	$743,531	$1,039,611	$321,668
+Caterpillar Inc. LD-235	$742	$103	$279	$0	$0	$0
+Caterpillar Inc. LD353	$810,250	$1,004,710	$768,580	$652,830	$678,790	$184,800
+Caterpillar, Inc. - N4	$0	$0	$8,823	$22,198	$2,072	$0
+Caterpillar/Tecmosa	$480,579	$1,116,275	$899,711	$786,981	$972,839	$410,356
+CB Technologies, Inc	$0	$0	$0	$0	$50,000	$0
+CBOL Corporation	$2,622	$1,698	$0	$8,318	$4,158	$0
+Celestica International LP (6200)	$2,690	$34,874	$131,332	$204,003	$261,958	$14,052
+Central Connectors, Inc	$2,882	$0	$0	$0	$0	$0
+Clippard Instrument Laboratory, Inc.	$897,472	$478,436	$584,273	$565,991	$325,816	$168,873
+Cobham Mission Systems Orchard Park Inc.	$8,314	$1,529	$3,305	$0	$5,521	$6,058
+Complete Grinding Solutions	$0	$0	$0	$0	$4,898	$0
+Cone Drive Operations, Inc.	$0	$112,056	$683,726	$282,838	$565,055	$192,727
+Connective Inc.	$0	$1,224	$0	$0	$3,937	$0
+Cornerstone Research Group Inc.	$0	$3,553	$0	$0	$0	$0
+CSI Aerospace-Heico	$0	$0	$0	$0	$4,773	$3,542
+Cummins Ceva (US)	$83,932	$37,584	$0	$0	$0	$0
+Cummins Fuel Systems Plant	$394,406	$356,032	$149,726	$0	$0	$0
+Cummins Jamestown Engine Plant	$0	$612,602	$0	$0	$0	$0
+Cummins Juarez Fuel Systems (JFS)	$113,444	$574,332	$349,472	$0	$0	$0
+Cummins Memphis Distribution Center	$0	$504	$4,140	$0	$0	$0
+Cummins Rocky Mount Engine Plant (RMEP)	$3,422,319	$2,305,013	$1,171,994	$0	$0	$0
+Custom Control Sensors, LLC	$84,007	$63,039	$66,858	$166,091	$134,842	$23,814
+Cyient Ltd	$0	$0	$0	$1,496	$0	$0
+Danfoss Power Solutions II, LLC	$11,247	$26,100	$16,512	$0	$0	$13,010
+DARE Electronics Inc	$0	$0	$0	$0	$2,373	$0
+Deltec, Inc.	$0	$8,658	$8,872	$0	$12,006	$0
+Diamond Fasteners	$2,980	$3,844	$2,399	$0	$3,874	$0
+DLA Land and Maritime	$13,899	$0	$6,939	$10,633	$3,349	$10,895
+Druck Limited	$97,173	$20,809	$34,228	$33,237	$0	$0
+Ducommun Labarge Technologies, Inc	$0	$0	$5,893	$467,045	$135,075	$0
+Dytran Instruments, Inc. USA	$0	$3,446	$410	$6,583	$8,136	$0
+Eaton Aerospace/Glen	$83,079	$88,334	$97,556	$283,139	$247,292	$109,294
+Eaton Corp/Bethel	$314,013	$435,339	$687,513	$1,035,372	$1,570,686	$656,024
+Eaton Corp/LA	$4,773	$8,151	$16,084	$16,912	$15,081	$2,590
+Eaton Interconnect  (Cooper Interconnect)	$37,787	$146,750	$103,076	$225,250	$126,662	$157,205
+Electronic Services Intl	$31,595	$21,347	$42,160	$116,334	$29,405	$6,339
+EME Elektro-Metall	$0	$2,768	$21,427	$134,162	$320,041	$94,210
+Ensign-Bickford Aerospace & Defense Company	$6,029	$0	$0	$3,394	$2,411	$0
+ESP Associates, Inc	$1,875	$675	$0	$0	$0	$0
+EZ Form Cable Corp.	$0	$1,097	$0	$0	$0	$0
+FDH Electronics	$13,512	$25,583	$13,656	$39,951	$128,336	$42,515
+Flame Enterprises, Inc	$1,566	$0	$0	$0	$0	$0
+Flame Enterprises, Inc.	$14,416	$0	$0	$0	$0	$0
+Fluid Components International, LLC	$0	$0	$3,620	$992	$9,066	$0
+Forefront Machining Technologies	$2,559	$0	$0	$0	$0	$0
+Gas Turbine Efficiency, LLC	$0	$0	$1,738	$0	$0	$0
+Gemini Electronic Components	$41,158	$37,167	$0	$0	$0	$0
+GMI Corporation	$0	$0	$0	$0	$2,320	$0
+GW Lisk Co., Inc.	$37,841	$9,960	$16,581	$66,237	$28,036	$3,287
+H.K. Technologies, Inc.	$6,392	$0	$0	$0	$10,629	$0
+HarcoSemco Instruments, LLC	$35,475	$23,057	$42,863	$69,593	$38,538	$2,719
+Hartmann's, Inc.	$2,000	$2,000	$2,000	$600	$910	$5,940
+Heico Component Repair Group	$0	$0	$1,192	$0	$0	$0
+Honeywell ACS Sensing & Control/Boyne City	$0	$2,627	$1,245	$2,426	$0	$0
+Honeywell ACS Sensing & Control/Columbus	$26,469	$11,287	$13,969	$24,163	$30,668	$3,128
+Honeywell ACS Sensing & Control/Freeport	$97,589	$105,994	$130,106	$162,462	$267,179	$322,975
+Honeywell Aerospace Toronto (Celestica)	$0	$0	$0	$0	$0	$62,159
+Horstman, Inc.	$39,135	$0	$28,369	$42,389	$54,380	$0
+Howell Instruments, Inc.	$12,610	$0	$0	$0	$0	$0
+Hydra-Electric	$202,171	$138,810	$162,676	$203,410	$203,140	$62,946
+Industrial Research & Dev.	$0	$1,812	$3,986	$0	$3,797	$3,797
+Inficon Edc Inc.	$1,032	$0	$0	$0	$0	$0
+Intellisense Systems, Inc	$612	$250	$0	$0	$0	$0
+InterLnX Inc.	$4,349	$1,740	$0	$0	$0	$0
+Interstate Connecting Components	$21,293	$17,835	$119,090	$175,958	$49,028	$15,193
+Interstate-McBee	$0	$0	$181,835	$181,936	$173,784	$38,024
+ITT Aerospace	$945,135	$590,284	$1,234,252	$1,752,141	$1,389,776	$858,073
+ITT Enidine, Inc.	$0	$0	$2,180	$36,580	$2,180	$0
+J.J. Glastronics Private Limited (Unit-II)	$449	$0	$0	$0	$0	$0
+Jabil Circuit de Chihuahua	$17,490	$17,490	$0	$0	$0	$0
+Jacon Fasteners & Electronics	$25,480	$17,044	$16,936	$30,827	$36,388	$0
+Kelly Manufacturing Company	$109	$2,076	$0	$0	$0	$0
+L3 Fuzing & Ordnance Systems	$0	$0	$0	$41,297	$0	$0
+L3 Harris	$931,565	$317,541	$222,206	$1,232,059	$721,934	$390,321
+Logus Manufacturing Corp.	$2,345	$0	$0	$0	$0	$0
+Matrix Machine	$0	$0	$0	$4,588	$0	$0
+MEASURE TECH, INC.	$16,657	$13,186	$12,378	$25,597	$20,218	$676
+Measurement Specialties, Inc./TE Connectivity Co.	$7,596	$27,882	$0	$0	$15,586	$0
+Meggitt Sensing Systems	$3,092	$0	$0	$0	$0	$0
+Micro Stamping	$3,839	$9,897	$11,683	$0	$11,314	$0
+Mil-Aero Solutions, Inc.	$85,910	$40,664	$96,459	$85,973	$131,543	$30,243
+Minco	$13,162	$0	$0	$0	$0	$0
+MS Electronix, Inc.	$19,016	$7,165	$23,266	$7,146	$35,254	$13,650
+Nasco Aerospace and Electronics	$40,241	$2,172	$0	$0	$0	$0
+NMG Aerospace	$0	$0	$0	$8,531	$3,631	$0
+Northrop Grumman Systems Corp.	$0	$46,320	$24,277	$0	$0	$0
+Otto Tech Systems	$0	$0	$0	$0	$250,000	$0
+Outman Industries, Inc.	$1,294	$18,646	$34,267	$1,360	$0	$2,325
+Parker Hannifin Corp./New Haven IN	$77,672	$33,672	$0	$0	$0	$0
+Parker Hannifin Corporation/Quick Couplings NE	$114,990	$130,736	$91,760	$144,270	$89,040	$45,440
+Parker Hannifin/Sporlan Division	$7,164	$58,969	$80,138	$74,330	$53,234	$166,417
+Parker Lord Corporation	$13,488	$19,592	$21,410	$42,255	$33,749	$10,511
+PARPRO, INC	$6,709	$3,789	$9,258	$31,974	$7,833	$11,312
+PCB Piezotronics	$87,712	$80,673	$90,480	$150,983	$143,002	$38,267
+PHS/MWA AVIATION SERVICES	$0	$0	$0	$0	$1,750	$0
+Plexus (Xiamen ) Co., Ltd	$4,507	$10,860	$15,556	$0	$0	$0
+Pole Zero Corporation	$0	$7,099	$9,030	$0	$0	$0
+Powell Electronics	$154,838	$84,317	$150,907	$51,111	$187,569	$87,347
+PPI - Time Zero Inc. dba Virtex	$14,520	$0	$2,647	$14,082	$13,567	$10,132
+Precision Resource, Inc. Connecticut Division	$0	$7,937	$23,680	$51,462	$0	$0
+Pro-System, Inc.	$9,276	$10,187	$21,405	$0	$0	$0
+QC Conveyors	$14,840	$0	$0	$0	$0	$0
+QuinStar Technology, Inc.	$0	$0	$2,140	$0	$0	$4,768
+RAM Precision Industries	$1,722	$4,207	$5,264	$0	$0	$0
+REM Products, Inc.	$4,212	$7,831	$0	$12,211	$4,090	$0
+Resonetics	$444,757	$240,570	$353,441	$262,158	$261,253	$147,661
+REVOLOK USA LLC	$459,355	$0	$903,074	$1,296,363	$182,685	$0
+Rhausler, Inc.	$0	$0	$7,944	$0	$0	$0`;
+</script>
     <script>
         // Function to parse dollar amounts
         function parseDollar(str) {
