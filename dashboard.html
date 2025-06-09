@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoldX Customer Performance</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>BoldX Customer Performance</h1>
+            <p>Performance Analysis by Revenue Tiers</p>
+            <div class="boldx-intro">
+                At BoldX Industries, we’re done playing small. Our razor-sharp strategy slashes inefficiencies, amplifies high-value partnerships, and catapults us toward our $150M revenue goal. By enforcing bold minimum order thresholds, prioritizing high-growth clients, and rolling out a game-changing tiered discount system, we’re reshaping our customer ecosystem to drive unparalleled profitability and scalability. This is how we win.
+            </div>
+        </div>
+        
+        <div class="stats-overview">
+            <div class="stat-card high">
+                <div class="stat-number" id="high-count">0</div>
+                <div class="stat-label">High Performers</div>
+            </div>
+            <div class="stat-card mid">
+                <div class="stat-number" id="mid-count">0</div>
+                <div class="stat-label">Mid Performers</div>
+            </div>
+            <div class="stat-card low">
+                <div class="stat-number" id="low-count">0</div>
+                <div class="stat-label">Low Performers</div>
+            </div>
+        </div>
+        
+        <div class="performance-section high-performers">
+            <div class="section-header" onclick="toggleSection('high')">
+                <span>High Performers (>$400k)</span>
+                <span class="toggle-icon" id="high-icon">▼</span>
+            </div>
+            <div class="section-content" id="high-content">
+                <div class="customer-grid" id="high-customers"></div>
+                <div class="section-summary" id="high-summary"></div>
+            </div>
+        </div>
+        
+        <div class="performance-section mid-performers">
+            <div class="section-header" onclick="toggleSection('mid')">
+                <span>Mid Performers ($50k - $400k)</span>
+                <span class="toggle-icon" id="mid-icon">▼</span>
+            </div>
+            <div class="section-content" id="mid-content">
+                <div class="customer-grid" id="mid-customers"></div>
+                <div class="section-summary" id="mid-summary"></div>
+            </div>
+        </div>
+        
+        <div class="performance-section low-performers">
+            <div class="section-header" onclick="toggleSection('low')">
+                <span>Low Performers (<$50k)</span>
+                <span class="toggle-icon" id="low-icon">▼</span>
+            </div>
+            <div class="section-content expanded" id="low-content">
+                <div class="customer-grid" id="low-customers"></div>
+                <div class="section-summary" id="low-summary"></div>
+            </div>
+        </div>
+
+        <div class="firm-policy-wrapper">
+            <div class="firm-policy-card">
+                <div class="firm-policy-title">
+                    FIRM ORDER MINIMUM POLICY
+                </div>
+                <ul class="firm-policy-list">
+                    <li>$10,000 Minimum Order Size</li>
+                    <li>$50,000 Annual Sales Requirement</li>
+                </ul>
+                <div class="firm-divider"></div>
+                <div class="firm-section-label">WHY IT MATTERS</div>
+                <div class="firm-policy-description">
+                    Our data lays it bare—<span class="firm-highlight">50 of our 90 active customers</span> generated a mere <span class="firm-highlight">$580,000</span> in 2024, weighing us down with excessive overhead.<br>
+                    Shifting focus to high-impact clients like <span class="firm-highlight">Eaton Corp Bethel</span> (+$535,000 in 2024) and <span class="firm-highlight">L3</span> (90% margins) will fuel our growth while addressing our <span class="firm-highlight">$2M sales gap</span>.
+                </div>
+                <div class="firm-divider"></div>
+                <div class="firm-section-label">HYPOTHETICAL TIERED INCENTIVES</div>
+                <div class="firm-policy-incentive">
+                    [Tiered discount structure based on annual order volume]
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="dashboard.js"></script>
+</body>
+</html>
